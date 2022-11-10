@@ -33,9 +33,6 @@ if __name__ == '__main__':
     print(cfs)
     while k<100:
         # pos_list = np.zeros(3,4)
-        time_before_loop = time.process_time()
-        print("Time: ", time_before_loop)
-        
         
         cf1_pos = cf_list[0].position() 
         #cf2_pos = cf_list[1].position() 
@@ -47,8 +44,7 @@ if __name__ == '__main__':
                 
             # Position_log[i] = pos_list
         time.sleep(0.05)
-        time_after_loop = time.process_time()
-        print(time_after_loop)
+
         k+=1
     plt.show()
     
