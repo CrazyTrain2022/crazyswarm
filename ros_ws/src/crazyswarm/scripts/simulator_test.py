@@ -27,14 +27,16 @@ if __name__ == '__main__':
     cf_list = []
     for cf in allcfs.crazyflies:
             cf_list.append(cf)
-            
-            
+    print("cfs: ", cf_list)
+    
+    cfs = allcfs.crazyflies
+    print(cfs)
     while k<100:
         # pos_list = np.zeros(3,4)
         time_before_loop = time.process_time()
         print("Time: ", time_before_loop)
         
-        print("cf: ", cf_list)
+        
         cf1_pos = cf_list[0].position() 
         #cf2_pos = cf_list[1].position() 
         print(cf1_pos)
