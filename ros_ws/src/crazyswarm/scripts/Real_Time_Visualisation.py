@@ -5,7 +5,16 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.animation as animation
 import uav_trajectory
+import os
 import tkinter as Tkinter
+
+def save_csv():
+    global bool_save
+    if bool_save == 1:
+        bool_save = 0
+    elif bool_save == 0:
+        bool_save = 1
+
 
 def Sim_Paus():
     global anim_running
@@ -42,6 +51,9 @@ def animate_func(i):
         
         ax.scatter(cf_pos[0], cf_pos[1], cf_pos[2], c= color[k], label = name)
         ax.legend()
+        if bool_save:
+            print("Saving log data to file: " + name + "recordedPosition.csv")
+            np.savetxt("./Log_files/" + name + "recordedPosition.csv", dataLog.T, delimiter = ',', fmt = '%10f')
     
     
     #ax.scatter(cf2_pos[0], cf2_pos[1], cf2_pos[2], c= 'k')
@@ -68,6 +80,19 @@ if __name__ == "__main__":
     start_print.pack()
     start_print = Tkinter.Button(frame, text = "Start/Pause visualisation",  bg='green', command = Sim_Paus)
     start_print.pack()
+    start_print = Tkinter.Button(frame, text = "Save position to file",  bg='grey', command = save_csv) # variable = bool_save, onvalue=0, offvalue=1, command=save_csv)
+    start_print.pack()
+
+    # traj_lst = []
+    # i = 0
+    # path = "."
+    # trajectory_files = [f for f in os.listdir(path) if os.path.isfile(os.path.join(path, f))]
+    # for file in trajectory_files:
+    #     if("trajectory.csv" in file):
+    #         traj_lst.append(uav_trajectory.Trajectory())
+    #         traj_lst[i].loadcsv(file)
+    #         i += 1
+
 
     anim_running = True
     swarm = Crazyswarm()
