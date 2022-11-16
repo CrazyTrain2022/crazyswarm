@@ -34,7 +34,7 @@ def animate_func(i):
     for cf in vis_allcfs.crazyflies:
         print("running")
         name = "cf" + str(k+1)
-        cf_pos = cf.position_sim()
+        cf_pos = cf.position()
         log_x[k].append(cf_pos[0])
         log_y[k].append(cf_pos[1])
         log_z[k].append(cf_pos[2])
