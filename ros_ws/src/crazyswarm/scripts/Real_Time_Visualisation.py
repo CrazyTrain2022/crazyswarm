@@ -8,6 +8,28 @@ import uav_trajectory
 import os
 import tkinter as Tkinter
 
+def Show_traj():
+    traj_lst = []
+    i = 0
+    path = "."
+    trajectory_files = [f for f in os.listdir(path) if os.path.isfile(os.path.join(path, f))]
+    # print(trajectory_pathfiles)
+    for file in trajectory_files:
+        if("trajectory.csv" in file):
+            traj_lst.append(uav_trajectory.Trajectory())
+            traj_lst[i].loadcsv(file)
+            
+
+            ts = np.arange(0, traj_lst[i].duration, 0.01)
+            evals = np.empty((len(ts), 15))
+            for t, k in zip(ts, range(0, len(ts))):
+                e = traj_lst[i].eval(t)
+                evals[k, 0:3]  = e.pos
+
+
+            trajectory = ax.plot3D(evals[:,0], evals[:,1], evals[:,2])
+            i += 1
+
 def save_csv():
     global bool_save
     if bool_save == 1:
@@ -75,25 +97,10 @@ if __name__ == "__main__":
     frame = Tkinter.Frame(mainwindow)  #inside box
     frame.pack()
 
-    # traj_print = Tkinter.Checkbutton(frame, text="Show trajectory" )
-    # traj_print.pack()
-    # start_print=Tkinter.Button(frame, text = "Start trajectory",  bg='green')
-    # start_print.pack()
     start_print = Tkinter.Button(frame, text = "Start/Pause visualisation",  bg='green', command = Sim_Paus)
     start_print.pack()
     start_print = Tkinter.Button(frame, text = "Save position to file",  bg='grey', command = save_csv) # variable = bool_save, onvalue=0, offvalue=1, command=save_csv)
     start_print.pack()
-
-    # traj_lst = []
-    # i = 0
-    # path = "."
-    # trajectory_files = [f for f in os.listdir(path) if os.path.isfile(os.path.join(path, f))]
-    # for file in trajectory_files:
-    #     if("trajectory.csv" in file):
-    #         traj_lst.append(uav_trajectory.Trajectory())
-    #         traj_lst[i].loadcsv(file)
-    #         i += 1
-
 
     anim_running = True
     vis_swarm = Crazyswarm()
@@ -108,6 +115,7 @@ if __name__ == "__main__":
 
     fig = plt.figure()
     ax = Axes3D(fig)
+    Show_traj()
     ax.set_xlabel('Position X')
     ax.set_ylabel('Position Y')
     ax.set_zlabel('Position Z')

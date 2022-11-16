@@ -1,18 +1,21 @@
 #!/usr/bin/env python
 import rospy
 import numpy as np
-from geometry_msgs.msg import PoseStamped
+from geometry_msgs.msg import PoseStamped, TransformStamped
 from pycrazyswarm import *
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.animation as animation
 
 def Simulate(data):
-    rospy.loginfo(data.pose.position.x)
+    # rospy.loginfo(data.pose.position.x)
+    rospy.loginfo(data.transform.translation.x)
     print("Time since birth of Kung Carl Gustav XVI:", data.header.stamp.secs)
-    x_pos = data.pose.position.x
-    y_pos = data.pose.position.y
-    z_pos = data.pose.position.z
+    cf = data.child_frame_id
+    time = data.header.stamp.secs
+    x_pos = data.transform.translation.x
+    y_pos = data.transform.translation.y
+    z_pos = data.transform.translation.z
 
     current_pos = np.array([x_pos, y_pos, z_pos])
     ax.scatter(x_pos, y_pos, z_pos, marker = 'o')
@@ -23,7 +26,9 @@ def Simulate(data):
 
 def listner():
     rospy.init_node('Pose_Listner', anonymous=True)
-    rospy.Subscriber("/cf1/pose", PoseStamped, Simulate)
+    
+    rospy.Subscriber("/tf", TransformStamped, Simulate)
+    # rospy.Subscriber("/cf1/pose", PoseStamped, Simulate)
     rospy.spin()
 
 if __name__ == '__main__':
