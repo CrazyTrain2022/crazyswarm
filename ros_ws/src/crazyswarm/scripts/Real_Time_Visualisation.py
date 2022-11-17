@@ -7,6 +7,7 @@ import matplotlib.animation as animation
 import uav_trajectory
 import os
 import tkinter as Tkinter
+from tf import TransformListener
 
 def Show_traj():
     traj_lst = []
@@ -56,7 +57,10 @@ def animate_func(i):
     for cf in vis_allcfs.crazyflies:
         print("running")
         name = "cf" + str(k+1)
-        cf_pos = cf.position()
+        #cf_pos = cf.position_sim()
+        cf.tf.waitForTransform("/world", '/cf2', rospy.Time(0), rospy.Duration(10))
+        position, quaternion = cf.tf.lookupTransform("/world", '/cf2', rospy.Time(0))
+        cf_pos = np.array(position)
         log_x[k].append(cf_pos[0])
         log_y[k].append(cf_pos[1])
         log_z[k].append(cf_pos[2])
@@ -103,6 +107,7 @@ if __name__ == "__main__":
     start_print.pack()
 
     anim_running = True
+    bool_save = 0
     vis_swarm = Crazyswarm()
     vis_allcfs = vis_swarm.allcfs
     log_x = []

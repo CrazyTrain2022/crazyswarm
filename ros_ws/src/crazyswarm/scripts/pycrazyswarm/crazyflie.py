@@ -338,6 +338,10 @@ class Crazyflie:
         position, quaternion = self.tf.lookupTransform("/world", "/cf" + str(self.id), rospy.Time(0))
         return np.array(position)
 
+    def position_sim(self):
+        position_sim = self.position().copy()
+        return position_sim
+
     def getParam(self, name):
         """Returns the current value of the onboard named parameter.
 
