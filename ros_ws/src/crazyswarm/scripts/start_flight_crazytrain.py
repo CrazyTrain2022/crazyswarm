@@ -30,17 +30,14 @@ if __name__ == "__main__":
     # print(trajectory_pathfiles)
     for file in trajectory_files:
         if("trajectory.csv" in file):
-            print("file_name: ", file)
             traj_lst.append(uav_trajectory.Trajectory())
             traj_lst[i].loadcsv(file)
             i += 1
 
-
+    
     TRIALS = 1
     TIMESCALE = 1.0
     traj1 = traj_lst[0]
-    print("number of trajectories: ", len(traj_lst))
-    print("number of creazyflies: ", len(allcfs.crazyflies))
     j = 0
     for i in range(TRIALS):
         for cf in allcfs.crazyflies:
