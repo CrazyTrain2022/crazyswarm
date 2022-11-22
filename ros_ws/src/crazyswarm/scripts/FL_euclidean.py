@@ -7,10 +7,8 @@ import scipy as sp
 
 
 def cost_fun(cf2_goal_pos, cf1_pos, d):
-    return np.sqrt((cf1_pos[0] - cf2_goal_pos[0] + d)^2 + (cf1_pos[1] - cf2_goal_pos[0] + d)^2)
+    return np.sqrt((cf1_pos[0] - cf2_goal_pos[0] + d[0])^2 + (cf1_pos[1] - cf2_goal_pos[1] + d[1])^2)
     
-
-
 
 if __name__ == "__main__":
     swarm = Crazyswarm()
@@ -19,7 +17,7 @@ if __name__ == "__main__":
 
     """create trajectory"""
     traj1 = uav_trajectory.Trajectory()
-    traj1.loadcsv("custom_test.csv") #Choose trajectory for cf1
+    traj1.loadcsv("waypoints.csv") #Choose trajectory for cf1
     TRIALS = 1
     TIMESCALE = 1.0
 
@@ -47,12 +45,17 @@ if __name__ == "__main__":
             cf1_pos = cf1.position()
             cf2_pos = cf2.position()
 
-            opti_pos = sp.optimize.minimize(cost_fun, cf2_pos, args = (cf1_pos, 1))
+            opti_pos = sp.optimize.minimize(cost_fun, cf2_pos, args = (cf1_pos, np.array([0.5, 0.5])))
 
             cf2_pose_goal = opti_pos.x
 
+            cf2_pose_goal = np.array([opti_pos[0], opti_pos[1], cf1_pos[2] ])
 
-            # cf2_pose_goal = np.array([cf1_pos[0]-1, cf1_pos[1], cf1_pos[2] ])
+            print("Pose cf1")
+            print(cf1_pos)
+            print("Optimal Pose cf2")
+            print(cf2_pose_goal)
+
             # cf2.cmdPosition(cf2_pose_goal,0)
             timeHelper.sleep(0.1) #If the script does not work, check this.
             n = n + 1
