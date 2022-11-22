@@ -37,7 +37,6 @@ def Show_traj():
             trajectory = ax.plot3D(evals[:,0], evals[:,1], evals[:,2])
             i += 1
 
-
 def Simulate(data):
     time.sleep(1)
     print(data.transforms)
@@ -77,8 +76,6 @@ def Simulate(data):
     
     # #time.sleep(0.1)
     
-    
-
 def listner():
     global stop
     if stop:
