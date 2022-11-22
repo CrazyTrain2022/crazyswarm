@@ -38,6 +38,9 @@ def Show_traj():
             i += 1
 
 def Simulate(data):
+    global stop
+    if stop:
+        return 0 # eventuellt break, eventuellt inte här..
     time.sleep(1)
     print(data.transforms)
     #rospy.loginfo(data.pose.position.x)
@@ -80,13 +83,12 @@ def listner():
     global stop
     if stop:
         return 0 # eventuellt break?
-    #rospy.init_node('Pose_Listner10')
+    rospy.init_node('Pose_Listener')
     # rospy.Rate(1)
-    rospy.Subscriber("/tf", PoseStamped, Simulate)
-    print("SDFXSXSDSDSD")
+    #rospy.Subscriber("/tf", PoseStamped, Simulate)
     
-    plt.pause(0.5)
-    # rospy.Subscriber("/cf1/pose", PoseStamped, Simulate)
+    #plt.pause(0.5)
+    rospy.Subscriber("qualisys/cf1/pose", PoseStamped, Simulate)
     rospy.spin()
 
 if __name__ == '__main__':
