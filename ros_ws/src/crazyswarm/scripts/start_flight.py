@@ -38,6 +38,7 @@ if __name__ == "__main__":
     TRIALS = 1
     TIMESCALE = 1.0
     traj1 = traj_lst[0]
+    print("hej")
     print(traj_lst)
     j = 0
     for i in range(TRIALS):
