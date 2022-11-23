@@ -3,7 +3,7 @@
 from pycrazyswarm import Crazyswarm
 import numpy as np
 import uav_trajectory
-import scipy as sp
+from scipy import optimize
 import matplotlib.pyplot as plt
 
 
@@ -50,7 +50,7 @@ if __name__ == "__main__":
             cf1_pos = cf1.position()
             cf2_pos = cf2.position()
 
-            opti_pos = sp.optimize.minimize(cost_fun, cf2_pos, args = (cf1_pos, np.array([0.5, 0.5])))
+            opti_pos = optimize.minimize(cost_fun, cf2_pos, args = (cf1_pos, np.array([0.5, 0.5])))
 
             cf2_pose_goal = opti_pos.x
 
