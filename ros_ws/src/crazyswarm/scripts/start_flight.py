@@ -40,7 +40,7 @@ if __name__ == "__main__":
     TIMESCALE = 1.0
     traj1 = traj_lst[0]
     print("number of trajectories: ", len(traj_lst))
-    print("number of creazyflies: ", len(allcfs.crazyflies))
+    print("number of crazyflies: ", len(allcfs.crazyflies))
     j = 0
     for i in range(TRIALS):
         for cf in allcfs.crazyflies:
