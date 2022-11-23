@@ -26,7 +26,6 @@ if __name__ == "__main__":
             print("Position:", cf.position())
             cf.goTo(pos, 0, 2.0)
         timeHelper.sleep(2.5)
-
         allcfs.startTrajectory(0, timescale=TIMESCALE)
         timeHelper.sleep(traj1.duration * TIMESCALE + 2.0)
         allcfs.startTrajectory(0, timescale=TIMESCALE, reverse=True)
