@@ -55,24 +55,29 @@ class Visualisation:
 
 
 
-class cfs():
+class cfs:
     def __init__(self, vis):
         
         self.cf1 = vis.ax.scatter([], [], [], 'ro', label = "Cf1")
         self.cf2 = vis.ax.scatter([], [], [], 'bo', label = "Cf2")
+        self.cf3 = vis.ax.scatter([], [], [], 'bo', label = "Cf3")
+        
         self.cf1_x_data, self.cf1_y_data, self.cf1_z_data = [],[],[]
         self.cf2_x_data, self.cf2_y_data, self.cf2_z_data = [],[],[]
+        self.cf3_x_data, self.cf3_y_data, self.cf3_z_data = [],[],[]
 
     def cf1_callback(self, msg):
-        self.cf1_x_data.append(msg.position.x)
-        self.cf1_y_data.append(msg.position.y) 
-        self.cf1_z_data.append(msg.position.z)
+        self.cf1_x_data.append(msg.pose.position.x)
+        self.cf1_y_data.append(msg.pose.position.y) 
+        self.cf1_z_data.append(msg.pose.position.z)
+        print("hej1")
     
     def cf2_callback(self, msg):
-        self.cf2_x_data.append(msg.position.x)
-        self.cf2_y_data.append(msg.position.y) 
-        self.cf2_z_data.append(msg.position.z)
-        # print("Hej")
+        self.cf2_x_data.append(msg.pose.position.x)
+        self.cf2_y_data.append(msg.pose.position.y) 
+        self.cf2_z_data.append(msg.pose.position.z)
+
+        print("Hej")
 
     def update_plot(self, frame):
         self.cf1._offsets3d = [self.cf1_x_data, self.cf1_y_data, self.cf1_z_data]
@@ -88,15 +93,19 @@ if __name__ == "__main__":
     vis = Visualisation()
     # cf1 = cfs("cf1", 'bo', vis)
     # cf2 = cfs("cf2", 'ro', vis)
-    cf = cfs()
-    rospy.Subscriber("/mocap_qualisys/cf1/pose", PoseStamped, cf.cf_callback)
-    rospy.Subscriber("/mocap_qualisys/cf2/pose", PoseStamped, cf.cf_callback)
-    
-    # Alternativt:
+    cf = cfs(vis)
+    rospy.init_node('Pose_Listener')
+    cf1 = rospy.Subscriber("/qualisys/cf1/pose", PoseStamped, cf.cf1_callback)
 
+    print("TEST")
+    cf2 = rospy.Subscriber("/qualisys/cf2/pose", PoseStamped, cf.cf2_callback)
+    print("TEST2")
+    # Alternativt:
+    
     # cf1.listener()
     # cf2.listener()
     
     ani = animation.FuncAnimation(vis.fig, cf.update_plot, init_func=vis.plot_init)
+    
     # ani2 = animation.FuncAnimation(vis.fig, cf2.update_plot, init_func=vis.plot_init)
     plt.show()
