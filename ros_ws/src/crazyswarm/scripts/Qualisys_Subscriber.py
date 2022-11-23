@@ -26,14 +26,14 @@ class Visualisation:
         self.ax.set_title('Drone real-time position')
         # return self.ln
 
-    def cf1_callback(self, msg):
-        # self.x_data.append(msg.pose.x)
-        # self.y_data.append(msg.pose.y) 
-        # self.z_data.append(msg.pose.z)
-        print("Hej")
+    # def cf1_callback(self, msg):
+    #     # self.x_data.append(msg.pose.x)
+    #     # self.y_data.append(msg.pose.y) 
+    #     # self.z_data.append(msg.pose.z)
+    #     print("Hej")
 
 
-class cf():
+class cfs():
     def __init__(self, name, color, vis):
         #super().__init__()
         self.name = name
@@ -42,13 +42,16 @@ class cf():
         self.x_data, self.y_data, self.z_data = [],[],[]
 
     def cf_callback(self, msg):
-        # self.x_data.append(msg.x)
-        # self.y_data.append(msg.y) 
-        # self.z_data.append(msg.z)
-        print("Hej")
+        self.x_data.append(msg.position.x)
+        self.y_data.append(msg.position.y) 
+        self.z_data.append(msg.position.z)
+        # print("Hej")
+
+    def update_plot(self, frame):
+        self.pos._offsets3d = [self.x_data, self.y_data, self.z_data]
 
     def listener(self):
-        sub = rospy.Subscriber("/mocap_qualisys/" + self.name + "/pose", PoseStamped, self.cf_callback)  #   # Topic is given by /{mocap_sys}/{subject_name}/odom
+        rospy.Subscriber("/mocap_qualisys/" + self.name + "/pose", PoseStamped, self.cf_callback)  #   # Topic is given by /{mocap_sys}/{subject_name}/odom
 
 
 # def Simulate(data):
@@ -57,9 +60,17 @@ class cf():
 
 if __name__ == "__main__":
 
-    
     vis = Visualisation()
+    cf1 = cfs("cf1", 'bo', vis)
+    cf2 = cfs("cf2", 'ro', vis)
+    # rospy.Subscriber("/mocap_qualisys/cf1/pose", PoseStamped, cf1.cf_callback)
+    # rospy.Subscriber("/mocap_qualisys/cf2/pose", PoseStamped, cf2.cf_callback)
+    
+    # Alternativt:
 
-    cf1 = cf("cf1", "bo", vis)
-    ani = animation.FuncAnimation(vis.fig, vis.cf1_callback, init_func=vis.plot_init)
+    cf1.listener()
+    cf2.listener()
+
+    ani = animation.FuncAnimation(vis.fig, cf1.update_plot, init_func=vis.plot_init)
+    ani2 = animation.FuncAnimation(vis.fig, cf2.update_plot, init_func=vis.plot_init)
     plt.show()
