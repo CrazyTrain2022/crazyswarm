@@ -7,8 +7,8 @@ from scipy import optimize
 import matplotlib.pyplot as plt
 
 
-def cost_fun(cf2_goal_pos, cf1_pos, d):
-    return np.sqrt((cf1_pos[0] - cf2_goal_pos[0] + d[0])^2 + (cf1_pos[1] - cf2_goal_pos[1] + d[1])^2)
+def cost_fun(cf2_goal_pos, cf1_pos, d1, d2):
+    return np.sqrt((cf1_pos[0] - cf2_goal_pos[0] + d1)**2 + (cf1_pos[1] - cf2_goal_pos[1] + d2)**2)
     
 
 if __name__ == "__main__":
@@ -27,9 +27,6 @@ if __name__ == "__main__":
         cf2 = swarm.allcfs.crazyflies[1]
         cf1.uploadTrajectory(0, 0, traj1)
         cf2.uploadTrajectory(0, 0, traj1)
-
-        
-
 
         allcfs.takeoff(targetHeight=1.0, duration=2.0)
         timeHelper.sleep(2.5)
@@ -50,7 +47,7 @@ if __name__ == "__main__":
             cf1_pos = cf1.position()
             cf2_pos = cf2.position()
 
-            opti_pos = optimize.minimize(cost_fun, cf2_pos, args = (cf1_pos, np.array([0.5, 0.5])))
+            opti_pos = optimize.minimize(cost_fun, cf2_pos, args = (cf1_pos, 0.5, 0.5))
 
             cf2_pose_goal = opti_pos.x
 
