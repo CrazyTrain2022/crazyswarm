@@ -18,7 +18,7 @@ if __name__ == "__main__":
 
     """create trajectory"""
     traj1 = uav_trajectory.Trajectory()
-    traj1.loadcsv("figure8.csv") #Choose trajectory for cf1
+    traj1.loadcsv("waypoints.csv") #Choose trajectory for cf1
     TRIALS = 1
     TIMESCALE = 1.0
 
@@ -51,7 +51,7 @@ if __name__ == "__main__":
 
             cf2_pose_goal = opti_pos.x
 
-            cf2_pose_goal = np.array([opti_pos[0], opti_pos[1], cf1_pos[2] ])
+            cf2_pose_goal = np.array([opti_pos[0], opti_pos[1], cf1_pos[2]])
 
             cf1_pose_log = np.append(cf1_pose_log, cf1_pos, axis=0)
             cf2_goal_log = np.append(cf2_goal_log, cf2_pose_goal, axis=0)

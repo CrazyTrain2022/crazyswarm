@@ -12,7 +12,7 @@ if __name__ == "__main__":
 
     """create trajectory"""
     traj1 = uav_trajectory.Trajectory()
-    traj1.loadcsv("custom_test.csv") #Choose trajectory for cf1
+    traj1.loadcsv("figure8.csv") #Choose trajectory for cf1
     TRIALS = 1
     TIMESCALE = 1.0
 
