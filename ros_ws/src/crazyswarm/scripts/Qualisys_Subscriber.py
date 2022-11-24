@@ -15,15 +15,20 @@ class Visualisation:
         self.ax = Axes3D(self.fig)
         self.anim_running = True
         self.save = False
-        self.cf1_log = self.ax.plot3D([], [], [], c='black', linestyle='dotted')
-        self.cf2_log = self.ax.plot3D([], [], [], c='blue', linestyle='dotted')
-        self.cf3_log = self.ax.plot3D([], [], [], c='red', linestyle='dotted')
-        self.cf4_log = self.ax.plot3D([], [], [], c='green', linestyle='dotted')
+        # self.cf1_log = self.ax.plot3D([], [], [], c='black', linestyle='dotted')
+        # self.cf2_log = self.ax.plot3D([], [], [], c='blue', linestyle='dotted')
+        # self.cf3_log = self.ax.plot3D([], [], [], c='red', linestyle='dotted')
+        # self.cf4_log = self.ax.plot3D([], [], [], c='green', linestyle='dotted')
+
+        self.cf1_log = self.ax.scatter([], [], [], 'ko', label = "Cf1")
+        self.cf2_log = self.ax.scatter([], [], [], 'bo', label = "Cf2")
+        self.cf3_log = self.ax.scatter([], [], [], 'ro', label = "Cf3")
+        self.cf4_log = self.ax.scatter([], [], [], 'go', label = "Cf4")
         
-        self.cf1_pos = self.ax.scatter([], [], [], 'ko', label = "Cf1")
-        self.cf2_pos = self.ax.scatter([], [], [], 'bo', label = "Cf2")
-        self.cf3_pos = self.ax.scatter([], [], [], 'ro', label = "Cf3")
-        self.cf4_pos = self.ax.scatter([], [], [], 'go', label = "Cf4")
+        # self.cf1_pos = self.ax.scatter([], [], [], 'ko', label = "Cf1")
+        # self.cf2_pos = self.ax.scatter([], [], [], 'bo', label = "Cf2")
+        # self.cf3_pos = self.ax.scatter([], [], [], 'ro', label = "Cf3")
+        # self.cf4_pos = self.ax.scatter([], [], [], 'go', label = "Cf4")
 
         self.cf1_x_data, self.cf1_y_data, self.cf1_z_data = [],[],[]
         self.cf2_x_data, self.cf2_y_data, self.cf2_z_data = [],[],[]
@@ -61,9 +66,8 @@ class Visualisation:
                 self.traj_pos.append([evals[:,0], evals[:,1], evals[:,2]]) 
                 trajectory = self.ax.plot3D(evals[:,0], evals[:,1], evals[:,2], color = 'b')
                 i += 1
-        print(self.traj_pos)
 
-    def Sim_Paus(self):
+    def Sim_Paus(self, ani):
         if self.anim_running:
             ani.event_source.stop()
             self.anim_running = False
@@ -112,13 +116,13 @@ class Visualisation:
         self.cf3_log._offsets3d = [self.cf3_x_data, self.cf3_y_data, self.cf3_z_data]
         self.cf4_log._offsets3d = [self.cf4_x_data, self.cf4_y_data, self.cf4_z_data]
 
-        self.cf1_pos.set_data(self.cf1_x, self.cf1_y, self.cf1_z)
-        self.cf2_pos.set_data(self.cf2_x, self.cf2_y, self.cf2_z)
-        self.cf3_pos.set_data(self.cf3_x, self.cf3_y, self.cf3_z)
-        self.cf4_pos.set_data(self.cf4_x, self.cf4_y, self.cf4_z)
+        # self.cf1_pos.set_data(self.cf1_x, self.cf1_y, self.cf1_z)
+        # self.cf2_pos.set_data(self.cf2_x, self.cf2_y, self.cf2_z)
+        # self.cf3_pos.set_data(self.cf3_x, self.cf3_y, self.cf3_z)
+        # self.cf4_pos.set_data(self.cf4_x, self.cf4_y, self.cf4_z)
     
     def save_log(self, name):
-        plt.savefig(str(name) + ".png")
+        plt.savefig("./Log_files/" + str(name) + ".png")
         np.savetxt("./Log_files/cf1_recordedPosition.csv", np.array([self.cf1_x_data, self.cf1_y_data, self.cf1_z_data]).T, delimiter = ',', fmt = '%10f')
         np.savetxt("./Log_files/cf2_recordedPosition.csv", np.array([self.cf2_x_data, self.cf2_y_data, self.cf2_z_data]).T, delimiter = ',', fmt = '%10f')
         np.savetxt("./Log_files/cf3_recordedPosition.csv", np.array([self.cf3_x_data, self.cf3_y_data, self.cf3_z_data]).T, delimiter = ',', fmt = '%10f')
@@ -128,28 +132,28 @@ class Visualisation:
 if __name__ == "__main__":
     vis = Visualisation()
 
-    mainwindow = Tkinter.Tk()
-    mainwindow.title("CrazyTrain - Realtime simulation control")
-    mainwindow.geometry("350x300")
-    frame = Tkinter.Frame(mainwindow)  #inside box
-    frame.pack()
-    start_print = Tkinter.Button(frame, text = "Start/Pause visualisation",  bg='green', command = Visualisation.Sim_Paus)
-    start_print.pack()
-    traj_print = Tkinter.Button(frame, text="Show trajectory", bg='grey', command = vis.Show_traj)
-    traj_print.pack()
-    save_print = Tkinter.Button(frame, text = "Save position to file",  bg='grey', command = Visualisation.save_log) # variable = bool_save, onvalue=0, offvalue=1, command=save_csv)
-    save_print.pack()
-    entry1 = Tkinter.Entry(mainwindow)
-    start_print = Tkinter.Button(frame, text = "Save plot to file",  bg='grey', command = Visualisation.save_log(entry1)) # variable = bool_save, onvalue=0, offvalue=1, command=save_csv)
-    start_print.pack()
 
-
-    
     rospy.init_node('Pose_Listener')
     cf1 = rospy.Subscriber("/qualisys/cf1/pose", PoseStamped, vis.cf1_callback)
     cf2 = rospy.Subscriber("/qualisys/cf2/pose", PoseStamped, vis.cf2_callback)
     cf3 = rospy.Subscriber("/qualisys/cf3/pose", PoseStamped, vis.cf3_callback)
     cf4 = rospy.Subscriber("/qualisys/cf4/pose", PoseStamped, vis.cf4_callback)
 
-    ani = animation.FuncAnimation(vis.fig, vis.update_plot, init_func=vis.plot_init, blit=True) # oklart om true eller ej!
+    ani = animation.FuncAnimation(vis.fig, vis.update_plot, init_func=vis.plot_init, interval = 10) 
+
+    mainwindow = Tkinter.Tk()
+    mainwindow.title("CrazyTrain - Realtime simulation control")
+    mainwindow.geometry("350x300")
+    frame = Tkinter.Frame(mainwindow)  #inside box
+    frame.pack()
+    start_print = Tkinter.Button(frame, text = "Start/Pause visualisation",  bg='green', command = lambda : vis.Sim_Paus(ani))
+    start_print.pack()
+    traj_print = Tkinter.Button(frame, text="Show trajectory", bg='grey', command = lambda : vis.Show_traj())
+    traj_print.pack()
+    entry1 = Tkinter.Entry(mainwindow)
+    entry1.insert(0, "Name of saved png")
+    entry1.pack()
+    start_print = Tkinter.Button(frame, text = "Save plot to file",  bg='grey', command = lambda : vis.save_log(entry1.get())) 
+    start_print.pack()
+
     plt.show()
