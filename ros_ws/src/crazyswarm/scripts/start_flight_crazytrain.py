@@ -25,7 +25,7 @@ if __name__ == "__main__":
     # read all trajectory files and load into trajectory objects
     traj_lst = []
     traj_lst_string = []
-    for i in range(3):
+    for i in range(4):
         traj_lst_string.append(str(i+1))
         
     path = "."
@@ -42,12 +42,14 @@ if __name__ == "__main__":
             else:
                 traj_lst_string[3] = file
     #Check if actual trajectory file and put them in trajectory list so they come in the right order
+    for k in traj_lst_string:
+        print(k)
     i = 0
     for j in traj_lst_string:
         if(len(j) > 1):
-            print("trajectory: ", j)
             traj_lst.append(uav_trajectory.Trajectory())
             traj_lst[i].loadcsv(j)
+            print("appending :", j, i)
             i += 1
     TRIALS = 1
     TIMESCALE = 1.0
@@ -59,7 +61,6 @@ if __name__ == "__main__":
         for cf in allcfs.crazyflies:
             cf.uploadTrajectory(0, 0, traj_lst[j])
             j += 1
-
         allcfs.takeoff(targetHeight=1.0, duration=2.0)
         timeHelper.sleep(2.5)
         for cf in allcfs.crazyflies:
@@ -78,3 +79,4 @@ if __name__ == "__main__":
     for file in trajectory_files:
         if("trajectory.csv" in file):
             os.remove(file)
+            
