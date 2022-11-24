@@ -110,16 +110,30 @@ class Visualisation:
         self.cf4_z_data.append(self.cf4_z)
 
     def update_plot(self, frame):
-        vis.ax.clear() # Oklart om detta funkar...
-        self.cf1_log._offsets3d = [self.cf1_x_data, self.cf1_y_data, self.cf1_z_data]
-        self.cf2_log._offsets3d = [self.cf2_x_data, self.cf2_y_data, self.cf2_z_data]
-        self.cf3_log._offsets3d = [self.cf3_x_data, self.cf3_y_data, self.cf3_z_data]
-        self.cf4_log._offsets3d = [self.cf4_x_data, self.cf4_y_data, self.cf4_z_data]
+        # vis.ax.clear() # Oklart om detta funkar...
+        # self.cf1_log._offsets3d = [self.cf1_x_data, self.cf1_y_data, self.cf1_z_data]
+        # self.cf2_log._offsets3d = [self.cf2_x_data, self.cf2_y_data, self.cf2_z_data]
+        # self.cf3_log._offsets3d = [self.cf3_x_data, self.cf3_y_data, self.cf3_z_data]
+        # self.cf4_log._offsets3d = [self.cf4_x_data, self.cf4_y_data, self.cf4_z_data]
 
         # self.cf1_pos.set_data(self.cf1_x, self.cf1_y, self.cf1_z)
         # self.cf2_pos.set_data(self.cf2_x, self.cf2_y, self.cf2_z)
         # self.cf3_pos.set_data(self.cf3_x, self.cf3_y, self.cf3_z)
         # self.cf4_pos.set_data(self.cf4_x, self.cf4_y, self.cf4_z)
+
+        dataSet = np.array([self.cf2_x_data, self.cf2_y_data, self.cf2_z_data])
+        self.ax.plot3D(dataSet[0, :frame+1], dataSet[1, :frame+1], 
+               dataSet[2, :frame+1], c='black',linestyle='dotted')
+
+        self.ax.scatter(self.cf2_x, self.cf2_y, self.cf2_z, 'ko', label = "Cf1")
+        self.ax.set_xlim3d(-5, 5)
+        self.ax.set_ylim3d(-5, 5)
+        self.ax.set_zlim3d(0, 3)
+        self.ax.set_xlabel('Position X [m]')
+        self.ax.set_ylabel('Position Y [m]')
+        self.ax.set_zlabel('Position Z [m]')
+        self.ax.set_title('Drone real-time position')
+        self.ax.legend()
     
     def save_log(self, name):
         plt.savefig("./Log_files/" + str(name) + ".png")
@@ -132,14 +146,13 @@ class Visualisation:
 if __name__ == "__main__":
     vis = Visualisation()
 
-
     rospy.init_node('Pose_Listener')
     cf1 = rospy.Subscriber("/qualisys/cf1/pose", PoseStamped, vis.cf1_callback)
     cf2 = rospy.Subscriber("/qualisys/cf2/pose", PoseStamped, vis.cf2_callback)
     cf3 = rospy.Subscriber("/qualisys/cf3/pose", PoseStamped, vis.cf3_callback)
     cf4 = rospy.Subscriber("/qualisys/cf4/pose", PoseStamped, vis.cf4_callback)
 
-    ani = animation.FuncAnimation(vis.fig, vis.update_plot, init_func=vis.plot_init, interval = 10) 
+    ani = animation.FuncAnimation(vis.fig, vis.update_plot, init_func=vis.plot_init, interval = 100) 
 
     mainwindow = Tkinter.Tk()
     mainwindow.title("CrazyTrain - Realtime simulation control")
@@ -155,5 +168,4 @@ if __name__ == "__main__":
     entry1.pack()
     start_print = Tkinter.Button(frame, text = "Save plot to file",  bg='grey', command = lambda : vis.save_log(entry1.get())) 
     start_print.pack()
-
     plt.show()

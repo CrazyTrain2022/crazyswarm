@@ -549,6 +549,9 @@ class Crazyflie:
         self.setParam("ring/solidRed", int(r * 255))
         self.setParam("ring/solidGreen", int(g * 255))
         self.setParam("ring/solidBlue", int(b * 255))
+    
+    def getID(self):
+        return self.id
 
 
 class CrazyflieServer:
