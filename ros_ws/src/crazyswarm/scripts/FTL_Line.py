@@ -45,7 +45,7 @@ if __name__ == "__main__":
         cf1.startTrajectory(0, timescale=TIMESCALE)
         nbrloops= 10*(traj1.duration * TIMESCALE +2)
         n = 0
-        safe_dis = 0.8
+        safe_dis = 0.4
         while n < nbrloops:
             i = 0
             for cf in allcfs.crazyflies:
@@ -100,7 +100,7 @@ if __name__ == "__main__":
             n = n + 1
         
 
-        timeHelper.sleep(traj1.duration * TIMESCALE + 10.0)
+        timeHelper.sleep(1.0)
 
         # pos_offset = cf1pos + offset
         # problem: för många pos per sekund. 
@@ -109,7 +109,7 @@ if __name__ == "__main__":
         #rospy.init_node('test_high_level')
         #cf = crazyflie.Crazyflie("crazyflie2", "/vicon/crazyflie1/crazyflie1")
         
-        allcfs.setParam("commander/enHighLevel", 1)
+        #allcfs.NotifySetpointsStop()
         
         # cf1.setParam("commander/enHighLevel", 1)
         # cf2.setParam("commander/enHighLevel", 1)
