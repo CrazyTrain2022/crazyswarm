@@ -120,3 +120,7 @@ if __name__ == "__main__":
         timeHelper.sleep(3.0)
 
 
+    for file in trajectory_files:
+        if("trajectory.csv" in file):
+            os.remove(file)
+            
