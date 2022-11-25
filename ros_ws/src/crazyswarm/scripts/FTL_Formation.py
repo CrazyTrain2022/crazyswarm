@@ -1,9 +1,10 @@
-"""Follow the leader"""
+"""Follow the leader Formation"""
 #!/usr/bin/env
 from pycrazyswarm import Crazyswarm
 import numpy as np
 import uav_trajectory
 import math
+import os
 
 if __name__ == "__main__":
     swarm = Crazyswarm()
@@ -11,17 +12,46 @@ if __name__ == "__main__":
     allcfs = swarm.allcfs
 
     """create trajectory"""
-    traj1 = uav_trajectory.Trajectory()
-    traj1.loadcsv("figure8.csv") #Choose trajectory for cf1
+   # read all trajectory files and load into trajectory objects
+    traj_lst = []
+    traj_lst_string = []
+    for i in range(4):
+        traj_lst_string.append(str(i+1))
+        
+    path = "."
+    trajectory_files = [f for f in os.listdir(path) if os.path.isfile(os.path.join(path, f))]
+    #put the right trajectory file on the right place
+    for file in trajectory_files:
+        if("trajectory.csv" in file):
+            if "1" in file:
+                traj_lst_string[0] = file
+            elif "2" in file:
+                traj_lst_string[1] = file
+            elif "3" in file:
+                traj_lst_string[2] = file
+            else:
+                traj_lst_string[3] = file
+    #Check if actual trajectory file and put them in trajectory list so they come in the right order
+    for k in traj_lst_string:
+        print(k)
+    i = 0
+    for j in traj_lst_string:
+        if(len(j) > 1):
+            traj_lst.append(uav_trajectory.Trajectory())
+            traj_lst[i].loadcsv(j)
+            print("appending :", j, i)
+            i += 1
+   
+   
+   
+    traj1 = traj_lst[0] #Choose trajectory for the Leader
     TRIALS = 1
     TIMESCALE = 1.0
 
     for i in range(TRIALS):
         cf1 = swarm.allcfs.crazyflies[0]
-        # cf2 = swarm.allcfs.crazyflies[1]
-        # cf3 = swarm.allcfs.crazyflies[2]
-        # cf4 = swarm.allcfs.crazyflies[3]
-        # cf1.uploadTrajectory(0, 0, traj1)
+        
+        
 
         cf1.uploadTrajectory(0, 0, traj1)
         
@@ -65,17 +95,6 @@ if __name__ == "__main__":
                 
                 i += 1
 
-
-
-
-                # cf2_pose_goal = np.array([ cf1_pos[0]-0.5, cf1_pos[1], cf1_pos[2] ])
-                # cf2.cmdPosition(cf2_pose_goal,0)
-
-                # cf3_pose_goal = np.array([ cf1_pos[0]-1, cf1_pos[1], cf1_pos[2] ])
-                # cf3.cmdPosition(cf3_pose_goal,0)
-
-                # cf4_pose_goal = np.array([ cf1_pos[0]-1.5, cf1_pos[1], cf1_pos[2] ])
-                # cf4.cmdPosition(cf4_pose_goal,0)
             
             timeHelper.sleep(0.1) #If the script does not work, check this.
             n = n + 1
