@@ -25,6 +25,12 @@ if __name__ == "__main__":
 
         cf1.uploadTrajectory(0, 0, traj1)
         
+        xy_radius = 0.2
+        radii = xy_radius * np.array([1.0, 1.0, 3.0])
+
+        for i, cf in enumerate(swarm.allcfs.crazyflies):
+            others = swarm.allcfs.crazyflies[:i] + swarm.allcfs.crazyflies[(i+1):]
+            cf.enableCollisionAvoidance(others, radii)
         
 
         allcfs.takeoff(targetHeight=1.0, duration=2.0)
@@ -41,20 +47,24 @@ if __name__ == "__main__":
         n = 0
         safe_dis = 0.8
         while n < nbrloops:
-            
+            i = 0
             for cf in allcfs.crazyflies:
                 
-                if(cf.getID() == 1):
-                    cf1_pos = cf.position()
+                if(i == 0):
+                    cf_Leader_pos = cf.position()
+                    
                 else:
                     cf_follow_pos = cf.position()
-                    Dis = math.dist(cf1_pos, cf_follow_pos)
+                    Dis = math.dist(cf_Leader_pos, cf_follow_pos)
 
                     if (Dis > safe_dis):
-                        cf.cmdPosition(cf1_pos, 0)
+                        cf.cmdPosition(cf_Leader_pos, 0)
                     else:
-                        cf_safe_dis = np.array([cf_follow_pos[0], cf_follow_pos[1], cf1_pos[2]]) 
+                        cf_safe_dis = np.array([cf_follow_pos[0], cf_follow_pos[1], cf_Leader_pos[2]]) 
                         cf.cmdPosition(cf_safe_dis,0)
+                
+                i += 1
+
 
 
 
