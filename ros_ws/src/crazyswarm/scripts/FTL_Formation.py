@@ -102,25 +102,6 @@ if __name__ == "__main__":
 
         timeHelper.sleep(1.0)
 
-        # pos_offset = cf1pos + offset
-        # problem: för många pos per sekund. 
-        # cf2 tar pos på cf1 som goTo(pos_offset,0,2)
-        
-        #rospy.init_node('test_high_level')
-        #cf = crazyflie.Crazyflie("crazyflie2", "/vicon/crazyflie1/crazyflie1")
-        
-        #allcfs.NotifySetpointsStop()
-        
-        # cf1.setParam("commander/enHighLevel", 1)
-        # cf2.setParam("commander/enHighLevel", 1)
-        # cf3.setParam("commander/enHighLevel", 1)
-        # cf4.setParam("commander/enHighLevel", 1)
 
         allcfs.land(targetHeight=0.06, duration=2.0)
         timeHelper.sleep(3.0)
-
-
-    for file in trajectory_files:
-        if("trajectory.csv" in file):
-            os.remove(file)
-            

@@ -67,9 +67,23 @@ if __name__ == "__main__":
             cf.goTo(pos, 0, 2.0)
         timeHelper.sleep(2.5)
 
-        
-
         cf1.startTrajectory(0, timescale=TIMESCALE)
+
+        # id = 0
+        # for cf in allcfs.crazyflies:
+        #     if(id == 0):
+        #         cf.startTrajectory(0, timescale=TIMESCALE)
+        #         cf_Leader_pos = cf.position()
+        #     elif(id == 1):
+        #         cf.goTo(cf_Leader_pos, 0, 1)
+        #     elif(id == 2):
+        #         cf.goTo(cf_Leader_pos, 0, 2)
+        #     else:
+        #         cf.goTo(cf_Leader_pos, 0, 3)
+        #     id += 1
+
+
+        
         nbrloops= 10*(traj1.duration * TIMESCALE +2)
         n = 0
         safe_dis = 0.4
