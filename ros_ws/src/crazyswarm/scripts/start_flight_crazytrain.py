@@ -53,27 +53,34 @@ if __name__ == "__main__":
             i += 1
     TRIALS = 1
     TIMESCALE = 1.0
-    traj1 = traj_lst[0]
+
+    if not traj_lst: #Check if list is empty
+        traj1 = 0
+    else:
+        traj1 = traj_lst[0]
+
     print("number of trajectories: ", len(traj_lst))
     print("number of crazyflies: ", len(allcfs.crazyflies))
-    j = 0
-    for i in range(TRIALS):
-        for cf in allcfs.crazyflies:
-            cf.uploadTrajectory(0, 0, traj_lst[j])
-            j += 1
-        allcfs.takeoff(targetHeight=1.0, duration=2.0)
-        timeHelper.sleep(2.5)
-        for cf in allcfs.crazyflies:
-            pos = np.array(cf.initialPosition) + np.array([0, 0, 1.0])
-            cf.goTo(pos, 0, 2.0)
-        timeHelper.sleep(2.5)
-        allcfs.startTrajectory(0, timescale=TIMESCALE)
-        timeHelper.sleep(traj1.duration * TIMESCALE + 2.0)
-        # allcfs.startTrajectory(0, timescale=TIMESCALE, reverse=True)
-        # timeHelper.sleep(traj1.duration * TIMESCALE + 2.0)
 
-        allcfs.land(targetHeight=0.06, duration=2.0)
-        timeHelper.sleep(3.0)
+    if traj_lst: #only do this if list is not empty
+        j = 0
+        for i in range(TRIALS):
+            for cf in allcfs.crazyflies:
+                cf.uploadTrajectory(0, 0, traj_lst[j])
+                j += 1
+            allcfs.takeoff(targetHeight=1.0, duration=2.0)
+            timeHelper.sleep(2.5)
+            for cf in allcfs.crazyflies:
+                pos = np.array(cf.initialPosition) + np.array([0, 0, 1.0])
+                cf.goTo(pos, 0, 2.0)
+            timeHelper.sleep(2.5)
+            allcfs.startTrajectory(0, timescale=TIMESCALE)
+            timeHelper.sleep(traj1.duration * TIMESCALE + 2.0)
+            # allcfs.startTrajectory(0, timescale=TIMESCALE, reverse=True)
+            # timeHelper.sleep(traj1.duration * TIMESCALE + 2.0)
+
+            allcfs.land(targetHeight=0.06, duration=2.0)
+            timeHelper.sleep(3.0)
 
     #To delete all the trajectory files when we are done
     for file in trajectory_files:
