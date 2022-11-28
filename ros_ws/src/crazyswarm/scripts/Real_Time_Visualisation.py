@@ -16,6 +16,7 @@ class Visualisation:
         self.ax = Axes3D(self.fig)
         self.anim_running = True
         self.save = False
+        self.traj_on = False
 
         self.cf1_x_data, self.cf1_y_data, self.cf1_z_data = [],[],[]
         self.cf2_x_data, self.cf2_y_data, self.cf2_z_data = [],[],[]
@@ -32,6 +33,11 @@ class Visualisation:
         self.cf3_pos, = self.ax.plot3D([], [], [], 'ro', label = "Cf3")
         self.cf4_pos, = self.ax.plot3D([], [], [], 'go', label = "Cf4")
 
+        self.distance1 = []
+        self.distance2 = []
+        self.distance3 = []
+        self.distance4 = []
+
     def plot_init(self):
         # Setting up plot 
         self.ax.set_xlim3d(-5, 5)
@@ -40,28 +46,72 @@ class Visualisation:
         self.ax.set_xlabel('Position X [m]')
         self.ax.set_ylabel('Position Y [m]')
         self.ax.set_zlabel('Position Z [m]')
-        self.ax.set_title('Drone real-time position')
+        self.ax.set_title("Drone real-time position")
         self.ax.legend()
         
     def Show_traj(self): # Function that plots all drone trajectories
-        self.traj_lst = []
-        self.traj_pos = []
-        i = 0
-        path = "."
-        trajectory_files = [f for f in os.listdir(path) if os.path.isfile(os.path.join(path, f))]
-        # print(trajectory_pathfiles)
-        for file in trajectory_files:
-            if("trajectory.csv" in file):
-                self.traj_lst.append(uav_trajectory.Trajectory())
-                self.traj_lst[i].loadcsv(file)
-                ts = np.arange(0, self.traj_lst[i].duration, 0.01)
-                evals = np.empty((len(ts), 15))
-                for t, k in zip(ts, range(0, len(ts))):
-                    e = self.traj_lst[i].eval(t)
-                    evals[k, 0:3]  = e.pos
-                self.traj_pos.append([evals[:,0], evals[:,1], evals[:,2]]) 
-                trajectory = self.ax.plot3D(evals[:,0], evals[:,1], evals[:,2], color = 'b')
-                i += 1
+        if self.traj_on:
+            for traj in self.traj_lst:
+                traj.set_visible(False)
+                #traj.pop(0).remove() eventuellt
+            self.traj_on = False
+
+        else:
+            self.traj_lst = []
+            self.traj_pos = []
+            i = 0
+            path = "."
+            trajectory_files = [f for f in os.listdir(path) if os.path.isfile(os.path.join(path, f))]
+            # print(trajectory_pathfiles)
+            for file in trajectory_files:
+                if("trajectory.csv" in file):
+                    if("drone1" in file):
+                        self.traj1 = uav_trajectory.Trajectory()
+                        self.traj1.loadcsv(file)
+                        ts = np.arange(0, self.traj1.duration, 0.01)
+                        evals = np.empty((len(ts), 15))
+                        for t, k in zip(ts, range(0, len(ts))):
+                            e = self.traj1.eval(t)
+                            evals[k, 0:3]  = e.pos
+                    self.traj1_pos = np.array([evals[:,0], evals[:,1], evals[:,2]])
+                    trajectory, = self.ax.plot3D(evals[:,0], evals[:,1], evals[:,2], color = 'k',  alpha=0.2)
+                    trajectory.set_visible(True)
+                    self.traj_lst.append(trajectory)
+
+                    if("drone2" in file):
+                        self.traj2 = uav_trajectory.Trajectory()
+                        self.traj2.loadcsv(file)
+                        ts = np.arange(0, self.traj2.duration, 0.01)
+                        evals = np.empty((len(ts), 15))
+                        for t, k in zip(ts, range(0, len(ts))):
+                            e = self.traj2.eval(t)
+                            evals[k, 0:3]  = e.pos
+                    self.traj2_pos = np.array([evals[:,0], evals[:,1], evals[:,2]]) 
+                    trajectory, = self.ax.plot3D(evals[:,0], evals[:,1], evals[:,2], color = 'b', alpha=0.2)
+
+                    if("drone3" in file):
+                        self.traj3 = uav_trajectory.Trajectory()
+                        self.traj3.loadcsv(file)
+                        ts = np.arange(0, self.traj3.duration, 0.01)
+                        evals = np.empty((len(ts), 15))
+                        for t, k in zip(ts, range(0, len(ts))):
+                            e = self.traj3.eval(t)
+                            evals[k, 0:3]  = e.pos
+                    self.traj3_pos = np.array([evals[:,0], evals[:,1], evals[:,2]])
+                    trajectory, = self.ax.plot3D(evals[:,0], evals[:,1], evals[:,2], color = 'r', alpha=0.2)
+
+                    if("drone4" in file):
+                        self.traj4 = uav_trajectory.Trajectory()
+                        self.traj4.loadcsv(file)
+                        ts = np.arange(0, self.traj4.duration, 0.01)
+                        evals = np.empty((len(ts), 15))
+                        for t, k in zip(ts, range(0, len(ts))):
+                            e = self.traj4.eval(t)
+                            evals[k, 0:3]  = e.pos
+                    self.traj4_pos = np.array([evals[:,0], evals[:,1], evals[:,2]])
+                    trajectory, = self.ax.plot3D(evals[:,0], evals[:,1], evals[:,2], color = 'g', alpha=0.2)
+                    i += 1
+            self.traj_on = True
 
     def Sim_Paus(self, ani):
         
@@ -78,14 +128,16 @@ class Visualisation:
         self.cf1_x = msg.pose.position.x
         self.cf1_y = msg.pose.position.y
         self.cf1_z = msg.pose.position.z
+        self.cf1_p = np.array([self.cf1_x, self.cf1_y, self.cf1_z])
         self.cf1_x_data.append(self.cf1_x)
         self.cf1_y_data.append(self.cf1_y) 
         self.cf1_z_data.append(self.cf1_z)
-
+    
     def cf2_callback(self, msg):
         self.cf2_x = msg.pose.position.x
         self.cf2_y = msg.pose.position.y
         self.cf2_z = msg.pose.position.z
+        self.cf2_p = np.array([self.cf2_x, self.cf2_y, self.cf2_z])
         self.cf2_x_data.append(self.cf2_x)
         self.cf2_y_data.append(self.cf2_y) 
         self.cf2_z_data.append(self.cf2_z)
@@ -94,6 +146,7 @@ class Visualisation:
         self.cf3_x = msg.pose.position.x
         self.cf3_y = msg.pose.position.y
         self.cf3_z = msg.pose.position.z
+        self.cf3_p = np.array([self.cf3_x, self.cf3_y, self.cf3_z])
         self.cf3_x_data.append(self.cf3_x)
         self.cf3_y_data.append(self.cf3_y) 
         self.cf3_z_data.append(self.cf3_z)
@@ -102,6 +155,7 @@ class Visualisation:
         self.cf4_x = msg.pose.position.x
         self.cf4_y = msg.pose.position.y
         self.cf4_z = msg.pose.position.z
+        self.cf4_p = np.array([self.cf4_x, self.cf4_y, self.cf4_z])
         self.cf4_x_data.append(self.cf4_x)
         self.cf4_y_data.append(self.cf4_y) 
         self.cf4_z_data.append(self.cf4_z)
@@ -126,6 +180,11 @@ class Visualisation:
         self.cf3_pos.set_3d_properties(self.cf3_z_data[frame])
         self.cf4_pos.set_data(self.cf4_x_data[frame], self.cf4_y_data[frame])
         self.cf4_pos.set_3d_properties(self.cf4_z_data[frame])
+
+        self.distance1.append(min(np.linalg.norm(self.traj1_pos.T-self.cf1_p, axis=1)))
+        self.distance2.append(min(np.linalg.norm(self.traj2_pos.T-self.cf2_p, axis=1)))
+        self.distance3.append(min(np.linalg.norm(self.traj3distance3_pos.T-self.cf3distance3_p, axis=1)))
+        self.distance4.append(min(np.linalg.norm(self.traj4_pos.T-self.cf4_p, axis=1)))
 
     def save_log(self, name):
         plt.savefig("./Log_files/" + str(name) + ".png")
