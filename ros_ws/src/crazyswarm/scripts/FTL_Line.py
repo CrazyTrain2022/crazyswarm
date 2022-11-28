@@ -148,6 +148,6 @@ if __name__ == "__main__":
         allcfs.land(targetHeight=0.06, duration=2.0)
         timeHelper.sleep(3.0)
 
-    # for file in trajectory_files:
-    #     if("trajectory.csv" in file):
-    #         os.remove(file)
+    for file in trajectory_files:
+        if("trajectory.csv" in file):
+            os.remove(file)
