@@ -105,7 +105,9 @@ if __name__ == "__main__":
 
 
         # In this loop the drone with lowest id-number take the leader roll. 
-        # other cfs fly if the disatnce between them are larger then safe distance.
+        # other cfs fly if the disatnce between them are larger then safe distance,
+        # else hover at same position as before.
+
         nbrloops= 10*(traj1.duration * TIMESCALE +2) # 10Hz
         n = 0
         m = 0
