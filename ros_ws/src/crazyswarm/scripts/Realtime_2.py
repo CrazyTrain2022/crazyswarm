@@ -9,6 +9,8 @@ import tkinter as Tkinter
 import os
 from pycrazyswarm import *
 
+import math
+
 class CF:
     def __init__(self, ax, name, color):
         self.name = name
@@ -62,7 +64,7 @@ class CF:
           
 
 class Visualisation:
-    def __init__(self):
+    def __init__(self, cfs):
         # Creating figure window
         self.fig = plt.figure()
         self.ax = Axes3D(self.fig)
@@ -71,12 +73,23 @@ class Visualisation:
         self.traj_on = False
 
         # initialize lists
-        # self.cf1 = CF(self.ax, 'drone1', 'k')
-        # self.cf2 = CF(self.ax, 'drone2', 'b')
-        # self.cf3 = CF(self.ax, 'drone3', 'r')
-        self.cf4 = CF(self.ax, 'drone4', 'g')
 
-        self.cf_list = [self.cf4] #, self.cf3]#, self.cf4] #, self.cf2, self.cf3, self.cf4]
+        self.cf_list = []
+        for cf in cfs:
+            if cf == "cf1":
+                self.cf1 = CF(self.ax, 'drone1', 'k')
+                self.cf_list.append(self.cf1)
+            if cf == "cf2":
+                self.cf2 = CF(self.ax, 'drone2', 'b')
+                self.cf_list.append(self.cf2)
+            if cf == "cf3":
+                self.cf3 = CF(self.ax, 'drone3', 'r')
+                self.cf_list.append(self.cf3)
+            if cf == "cf4":
+                self.cf4 = CF(self.ax, 'drone4', 'g')
+                self.cf_list.append(self.cf4)
+
+         #, self.cf3]#, self.cf4] #, self.cf2, self.cf3, self.cf4]
 
     def plot_init(self):
         # Setting up plot 
@@ -112,33 +125,37 @@ class Visualisation:
             self.anim_running = True
             print("Animation resumed")
 
-    # def cf1_callback(self, msg):
-    #     self.cf1.x, self.cf1.y, self.cf1.z = msg.pose.position.x, msg.pose.position.y, msg.pose.position.z
-    #     self.cf1.p = np.array([self.cf1.x, self.cf1.y, self.cf1.z])
-    #     self.cf1.x_data.append(self.cf1.x)
-    #     self.cf1.y_data.append(self.cf1.y) 
-    #     self.cf1.z_data.append(self.cf1.z)
+    def cf1_callback(self, msg):
+        if isinstance(msg.pose.position.x, float):
+            self.cf1.x, self.cf1.y, self.cf1.z = msg.pose.position.x, msg.pose.position.y, msg.pose.position.z
+            self.cf1.p = np.array([self.cf1.x, self.cf1.y, self.cf1.z])
+            self.cf1.x_data.append(self.cf1.x)
+            self.cf1.y_data.append(self.cf1.y) 
+            self.cf1.z_data.append(self.cf1.z)
 
-    # def cf2_callback(self, msg):
-    #     self.cf2.x, self.cf2.y, self.cf2.z = msg.pose.position.x, msg.pose.position.y, msg.pose.position.z
-    #     self.cf2.p = np.array([self.cf2.x, self.cf2.y, self.cf2.z])
-    #     self.cf2.x_data.append(self.cf2.x)
-    #     self.cf2.y_data.append(self.cf2.y) 
-    #     self.cf2.z_data.append(self.cf2.z)
+    def cf2_callback(self, msg):
+        if isinstance(msg.pose.position.x, float):
+            self.cf2.x, self.cf2.y, self.cf2.z = msg.pose.position.x, msg.pose.position.y, msg.pose.position.z
+            self.cf2.p = np.array([self.cf2.x, self.cf2.y, self.cf2.z])
+            self.cf2.x_data.append(self.cf2.x)
+            self.cf2.y_data.append(self.cf2.y) 
+            self.cf2.z_data.append(self.cf2.z)
 
-    # def cf3_callback(self, msg):
-    #     self.cf3.x, self.cf3.y, self.cf3.z = msg.pose.position.x, msg.pose.position.y, msg.pose.position.z
-    #     self.cf3.p = np.array([self.cf3.x, self.cf3.y, self.cf3.z])
-    #     self.cf3.x_data.append(self.cf3.x)
-    #     self.cf3.y_data.append(self.cf3.y) 
-    #     self.cf3.z_data.append(self.cf3.z)
+    def cf3_callback(self, msg):
+        if isinstance(msg.pose.position.x, float):
+            self.cf3.x, self.cf3.y, self.cf3.z = msg.pose.position.x, msg.pose.position.y, msg.pose.position.z
+            self.cf3.p = np.array([self.cf3.x, self.cf3.y, self.cf3.z])
+            self.cf3.x_data.append(self.cf3.x)
+            self.cf3.y_data.append(self.cf3.y) 
+            self.cf3.z_data.append(self.cf3.z)
 
     def cf4_callback(self, msg):
-        self.cf4.x, self.cf4.y, self.cf4.z = msg.pose.position.x, msg.pose.position.y, msg.pose.position.z
-        self.cf4.p = np.array([self.cf4.x, self.cf4.y, self.cf4.z])
-        self.cf4.x_data.append(self.cf4.x)
-        self.cf4.y_data.append(self.cf4.y) 
-        self.cf4.z_data.append(self.cf4.z)
+        if isinstance(msg.pose.position.x, float):
+            self.cf4.x, self.cf4.y, self.cf4.z = msg.pose.position.x, msg.pose.position.y, msg.pose.position.z
+            self.cf4.p = np.array([self.cf4.x, self.cf4.y, self.cf4.z])
+            self.cf4.x_data.append(self.cf4.x)
+            self.cf4.y_data.append(self.cf4.y) 
+            self.cf4.z_data.append(self.cf4.z)
     
 
     def update_plot(self, frame):
@@ -170,18 +187,27 @@ class Visualisation:
         plt.show()
 
 if __name__ == "__main__":
-    vis = Visualisation()
-    # allcfs = Crazyswarm().allcfs
-    # for cf in allcfs.crazyflies:
-    #     print(cf.prefix())
+    
+    allcfs = Crazyswarm().allcfs
+    i = 1
 
+    cfs = []
+    for cf in allcfs.crazyflies:
+        cfs.append = cf.prefix
+    
+    vis = Visualisation(cfs)
 
     rospy.init_node('Pose_Listener')
-    # cf1 = rospy.Subscriber("/qualisys/cf1/pose", PoseStamped, vis.cf1_callback)
-    # cf2 = rospy.Subscriber("/qualisys/cf2/pose", PoseStamped, vis.cf2_callback)
-    # cf3 = rospy.Subscriber("/qualisys/cf3/pose", PoseStamped, vis.cf3_callback)
-    cf4 = rospy.Subscriber("/qualisys/cf4/pose", PoseStamped, vis.cf4_callback)
-
+    for cf in cfs:
+        if cf == "cf1":
+            cf1 = rospy.Subscriber("/qualisys/cf1/pose", PoseStamped, vis.cf1_callback)
+        if cf == "cf2":
+            cf2 = rospy.Subscriber("/qualisys/cf2/pose", PoseStamped, vis.cf2_callback)
+        if cf == "cf3":
+            cf1 = rospy.Subscriber("/qualisys/cf3/pose", PoseStamped, vis.cf3_callback)
+        if cf == "cf4":
+            cf2 = rospy.Subscriber("/qualisys/cf4/pose", PoseStamped, vis.cf4_callback)
+        
     ani = animation.FuncAnimation(vis.fig, vis.update_plot, init_func=vis.plot_init) # oklart om true eller ej!
     
     mainwindow = Tkinter.Tk()
