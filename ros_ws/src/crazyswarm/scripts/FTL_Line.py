@@ -73,8 +73,12 @@ if __name__ == "__main__":
             cf.enableCollisionAvoidance(others, radii)
         
 
+        # Take off all the drones that are in the allfcs list to 1m above the ground during 2s.
+        # then sleep to lets the drones are in diserted hight.
         allcfs.takeoff(targetHeight=1.0, duration=2.0)
-        timeHelper.sleep(2.5)
+        timeHelper.sleep(2.5) 
+
+        # Here the drones fly to the 2m high.
         for cf in allcfs.crazyflies:
             pos = np.array(cf.initialPosition) + np.array([0, 0, 1.0])
             cf.goTo(pos, 0, 2.0)
