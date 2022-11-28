@@ -75,7 +75,7 @@ if __name__ == "__main__":
         cf1.startTrajectory(0, timescale=TIMESCALE)
         nbrloops= 10*(traj1.duration * TIMESCALE +2)
         n = 0
-        safe_dis = 0.4
+        safe_dis = 0.5
         while n < nbrloops:
             i = 0
             for cf in allcfs.crazyflies:

@@ -81,6 +81,7 @@ class Visualisation:
         self.cf1_x = msg.pose.position.x
         self.cf1_y = msg.pose.position.y
         self.cf1_z = msg.pose.position.z
+        self.cf1_p = np.array([self.cf1_x, self.cf1_y, self.cf1_z])
         self.cf1_x_data.append(self.cf1_x)
         self.cf1_y_data.append(self.cf1_y) 
         self.cf1_z_data.append(self.cf1_z)
@@ -89,6 +90,7 @@ class Visualisation:
         self.cf2_x = msg.pose.position.x
         self.cf2_y = msg.pose.position.y
         self.cf2_z = msg.pose.position.z
+        self.cf2_p = np.array([self.cf2_x, self.cf2_y, self.cf2_z])
         self.cf2_x_data.append(self.cf2_x)
         self.cf2_y_data.append(self.cf2_y) 
         self.cf2_z_data.append(self.cf2_z)
@@ -97,6 +99,7 @@ class Visualisation:
         self.cf3_x = msg.pose.position.x
         self.cf3_y = msg.pose.position.y
         self.cf3_z = msg.pose.position.z
+        self.cf3_p = np.array([self.cf3_x, self.cf3_y, self.cf3_z])
         self.cf3_x_data.append(self.cf3_x)
         self.cf3_y_data.append(self.cf3_y) 
         self.cf3_z_data.append(self.cf3_z)
@@ -105,6 +108,7 @@ class Visualisation:
         self.cf4_x = msg.pose.position.x
         self.cf4_y = msg.pose.position.y
         self.cf4_z = msg.pose.position.z
+        self.cf4_p = np.array([self.cf4_x, self.cf4_y, self.cf4_z])
         self.cf4_x_data.append(self.cf4_x)
         self.cf4_y_data.append(self.cf4_y) 
         self.cf4_z_data.append(self.cf4_z)

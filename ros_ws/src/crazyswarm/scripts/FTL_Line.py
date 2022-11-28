@@ -6,6 +6,19 @@ import uav_trajectory
 import math
 import os
 
+def pos_calc(cf, pos0, pos1, safe):
+    Dis = math.dist(pos0, pos1)
+
+    if (Dis > safe):
+        cf.cmdPosition(pos0, 0)
+    else:
+        cf_safe_dis = np.array([pos1[0], pos1[1], pos0[2]]) 
+        cf.cmdPosition(cf_safe_dis,0)
+
+
+
+
+
 if __name__ == "__main__":
     swarm = Crazyswarm()
     timeHelper = swarm.timeHelper
@@ -86,9 +99,11 @@ if __name__ == "__main__":
         
         nbrloops= 10*(traj1.duration * TIMESCALE +2)
         n = 0
-        safe_dis = 0.4
+        m = 0
+        safe_dis = 0.5
         while n < nbrloops:
             i = 0
+            
             for cf in allcfs.crazyflies:
                 
                 if(i == 0):
@@ -96,32 +111,30 @@ if __name__ == "__main__":
                     
                 elif(i == 1):
                     cf_follow1_pos = cf.position()
-                    Dis = math.dist(cf_Leader_pos, cf_follow1_pos)
-
-                    if (Dis > safe_dis):
-                        cf.cmdPosition(cf_Leader_pos, 0)
-                    else:
-                        cf_safe_dis = np.array([cf_follow1_pos[0], cf_follow1_pos[1], cf_Leader_pos[2]]) 
-                        cf.cmdPosition(cf_safe_dis,0)
+                    pos_calc(cf, cf_Leader_pos, cf_follow1_pos, safe_dis)
                 
                 elif(i == 2):
-                    cf_follow2_pos = cf.position()
-                    Dis = math.dist(cf_follow1_pos, cf_follow2_pos)
 
-                    if (Dis > safe_dis):
-                        cf.cmdPosition(cf_follow1_pos, 0)
+                    if (m == 0):
+                        timeHelper.sleep(1.0)
+                        m = 1
+                        cf_follow2_pos = cf.position()
+                        pos_calc(cf, cf_follow1_pos,cf_follow2_pos, safe_dis)
+
                     else:
-                        cf_safe_dis = np.array([cf_follow2_pos[0], cf_follow2_pos[1], cf_follow1_pos[2]]) 
-                        cf.cmdPosition(cf_safe_dis,0)
+                        cf_follow2_pos = cf.position()
+                        pos_calc(cf, cf_follow1_pos,cf_follow2_pos, safe_dis) 
+                
                 else:
-                    cf_follow3_pos = cf.position()
-                    Dis = math.dist(cf_follow2_pos, cf_follow3_pos)
-
-                    if (Dis > safe_dis):
-                        cf.cmdPosition(cf_follow2_pos, 0)
+                    if(m == 1):
+                        timeHelper.sleep(3.0)
+                        m = 2
+                    
+                        cf_follow3_pos = cf.position()
+                        pos_calc(cf, cf_follow2_pos,cf_follow3_pos, safe_dis)
                     else:
-                        cf_safe_dis = np.array([cf_follow3_pos[0], cf_follow3_pos[1], cf_follow2_pos[2]]) 
-                        cf.cmdPosition(cf_safe_dis,0)
+                        cf_follow3_pos = cf.position()
+                        pos_calc(cf, cf_follow2_pos,cf_follow3_pos, safe_dis)
 
                 i += 1
 
