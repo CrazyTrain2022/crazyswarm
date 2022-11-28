@@ -8,7 +8,7 @@ import sys
 import time
 
 
-PROJECT_PATH = "/home/crazycrowd/crazycrowd/visionen/"  #File path to the project folder 'visionen'
+PROJECT_PATH = "/home/CrazyTrain/CrazyTrain2022/"  #File path to the project folder 'visionen'
 MODES = np.array(["normal", "yaw_independant"])         #Manual control modes
 
 def main(flags):
