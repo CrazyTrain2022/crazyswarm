@@ -6,6 +6,10 @@ import uav_trajectory
 import math
 import os
 
+# Definitation of the function that calulate the distance between two cfs (crazyflies)
+# and if the actual distance is larger than the safe dist. the follower can flights, 
+# else it stay at same posistion.
+
 def pos_calc(cf, pos0, pos1, safe):
     Dis = math.dist(pos0, pos1)
 
@@ -100,8 +104,9 @@ if __name__ == "__main__":
         #     id += 1
 
 
-        
-        nbrloops= 10*(traj1.duration * TIMESCALE +2)
+        # In this loop the drone with lowest id-number take the leader roll. 
+        # other cfs fly if the disatnce between them are larger then safe distance.
+        nbrloops= 10*(traj1.duration * TIMESCALE +2) # 10Hz
         n = 0
         m = 0
         safe_dis = 0.5
