@@ -76,16 +76,16 @@ class Visualisation:
 
         self.cf_list = []
         for cf in cfs:
-            if cf == "cf1":
+            if cf == "/cf1":
                 self.cf1 = CF(self.ax, 'drone1', 'k')
                 self.cf_list.append(self.cf1)
-            if cf == "cf2":
+            if cf == "/cf2":
                 self.cf2 = CF(self.ax, 'drone2', 'b')
                 self.cf_list.append(self.cf2)
-            if cf == "cf3":
+            if cf == "/cf3":
                 self.cf3 = CF(self.ax, 'drone3', 'r')
                 self.cf_list.append(self.cf3)
-            if cf == "cf4":
+            if cf == "/cf4":
                 self.cf4 = CF(self.ax, 'drone4', 'g')
                 self.cf_list.append(self.cf4)
 
@@ -193,20 +193,20 @@ if __name__ == "__main__":
 
     cfs = []
     for cf in allcfs.crazyflies:
-        cfs.append = cf.prefix
+        cfs.append(cf.prefix)
     
     vis = Visualisation(cfs)
 
-    rospy.init_node('Pose_Listener')
+    #rospy.init_node('Pose_Listener')
     for cf in cfs:
-        if cf == "cf1":
+        if cf == "/cf1":
             cf1 = rospy.Subscriber("/qualisys/cf1/pose", PoseStamped, vis.cf1_callback)
-        if cf == "cf2":
+        if cf == "/cf2":
             cf2 = rospy.Subscriber("/qualisys/cf2/pose", PoseStamped, vis.cf2_callback)
-        if cf == "cf3":
-            cf1 = rospy.Subscriber("/qualisys/cf3/pose", PoseStamped, vis.cf3_callback)
-        if cf == "cf4":
-            cf2 = rospy.Subscriber("/qualisys/cf4/pose", PoseStamped, vis.cf4_callback)
+        if cf == "/cf3":
+            cf3 = rospy.Subscriber("/qualisys/cf3/pose", PoseStamped, vis.cf3_callback)
+        if cf == "/cf4":
+            cf4 = rospy.Subscriber("/qualisys/cf4/pose", PoseStamped, vis.cf4_callback)
         
     ani = animation.FuncAnimation(vis.fig, vis.update_plot, init_func=vis.plot_init) # oklart om true eller ej!
     
