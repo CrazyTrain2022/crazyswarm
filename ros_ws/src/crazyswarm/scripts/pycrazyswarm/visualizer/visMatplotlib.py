@@ -4,14 +4,23 @@ from mpl_toolkits.mplot3d import Axes3D
 from mpl_toolkits.mplot3d.art3d import Line3DCollection
 import matplotlib.pyplot as plt
 import numpy as np
+import yaml
+import uav_trajectory
+import os
 
 #TODO: Detta bör läsas ur en csv fil (lösning finns i planner simulator)
-obs1 = np.array([0,1,0,2,1,1])
-#obs2 = np.array([1,1,0,1,1,1])
+obs1 = np.array([0,1,0,1,1,1])
+#obs2 = np.array([0,1,0,2,1,2])
+
+# Drone colors
+COLORS = ["green","red","blue","black"]
 
 # Define dimensions of Visionen
-VISIONEN_X_DIM = 11.70
-VISIONEN_Y_DIM = 11.70
+# VISIONEN_X_DIM = 11.70
+# VISIONEN_Y_DIM = 11.70
+# VISIONEN_Z_DIM = 3.0
+VISIONEN_X_DIM = 8
+VISIONEN_Y_DIM = 8
 VISIONEN_Z_DIM = 3.0
 
 #TODO: Kanske bör läggas in i ett separat script för tydlighet?
@@ -34,22 +43,46 @@ class VisMatplotlib:
         self.ax.set_title("Drone Simulation")
         self.plot = None
         self.timeAnnotation = self.ax.annotate("Time", xy=(3, 0), xycoords='axes fraction', fontsize=12, ha='right', va='bottom')
-
-        self.line_color = 0.3 * np.ones(3)
+        self.line_color = 1 * np.ones(3)
 
         # Lazy-constructed data for connectivity graph gfx.
         self.graph_edges = None
         self.graph_lines = None
         self.graph = None
 
+        #Reading manual or autonomous control
+        self.manual_mode = 0
+        if flags == "--manual":
+            self.manual_mode = 1
+
         #TODO: Detta bör ligga under if flags == "--obs"
-        # Vizualisation of obstacles
-        self.ax.voxels(add_obs(obs1[0], obs1[1], obs1[2], obs1[3], obs1[4], obs1[5]), facecolors='red', zorder = 0)
-        #self.ax.voxels(add_obs(obs2[0], obs2[1], obs2[2], obs2[3], obs2[4], obs2[5]), facecolors='blue', zorder = 1)
         if flags == "--obs":
-            #TODO: Hur lägger man till flaggor i crazyswarm_py.py?
-            pass
+            self.ax.voxels(add_obs(obs1[0], obs1[1], obs1[2], obs1[3], obs1[4], obs1[5]), facecolors='red',alpha = 1, zorder = 0)
     
+    def Show_traj(self):
+        print("Showtraj")
+        path = "."
+        self.traj = []
+        i = 0
+        trajectory_files = [f for f in os.listdir(path) if os.path.isfile(os.path.join(path, f))]
+        # print(trajectory_pathfiles)
+        for file in trajectory_files:
+            if("trajectory.csv" in file):
+                self.Traj_exist = True
+                self.traj.append(uav_trajectory.Trajectory())
+                self.traj[i].loadcsv(file)
+                idx = file[5] 
+                ts = np.arange(0, self.traj[i].duration, 0.01)
+                self.evals = np.empty((len(ts), 15))
+                for t, k in zip(ts, range(0, len(ts))):
+                    e = self.traj[i].eval(t)
+                    self.evals[k, 0:3]  = e.pos
+                self.traj_pos = np.array([self.evals[:,0], self.evals[:,1], self.evals[:,2]]) # evals[:,2]
+                self.traj[i]  = self.ax.plot3D(self.evals[:,0], self.evals[:,1], self.evals[:,2], color = COLORS[int(idx)-1], linestyle = 'dashed', alpha=0.7)
+                self.ax.plot3D([self.evals[0,0], self.evals[0,0]], [self.evals[0,1], self.evals[0,1]], [0, self.evals[0,2]],color = COLORS[int(idx)-1], linestyle = 'dashed', alpha=0.7)
+                i += 1
+
+        
     def setGraph(self, edges):
         """Set edges of graph visualization - sequence of (i,j) tuples."""
 
@@ -75,7 +108,7 @@ class VisMatplotlib:
         for i in range(0,len(crazyflies)):
             cf = crazyflies[i]
             x, y, z = cf.position()
-            color = "green"
+            color = COLORS[cf.id-1]
             xs.append(x)
             ys.append(y)
             zs.append(z)
@@ -84,7 +117,6 @@ class VisMatplotlib:
         if self.plot is None:
             self.plot = self.ax.scatter(xs, ys, zs, c=cs)
         else:
-            print("YES")
             # TODO: Don't use protected members.
             self.plot._offsets3d = (xs, ys, zs)
             self.plot.set_facecolors(cs)
@@ -94,6 +126,7 @@ class VisMatplotlib:
 
         if self.graph is not None:
             # Update graph line segments to match new Crazyflie positions.
+            print("Self.graph true")
             for k, (i, j) in enumerate(self.graph_edges):
                 self.graph_lines[k, 0, :] = xs[i], ys[i], zs[i]
                 self.graph_lines[k, 1, :] = xs[j], ys[j], zs[j]

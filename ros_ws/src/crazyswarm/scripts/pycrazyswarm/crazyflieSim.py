@@ -12,7 +12,7 @@ from .cfsim import cffirmware as firm
 # also does the plotting.
 #
 class TimeHelper:
-    def __init__(self, vis, dt, writecsv, disturbanceSize, maxVel=np.inf, videopath=None):
+    def __init__(self, vis, dt, writecsv, disturbanceSize, maxVel=np.inf, videopath=None, flags=None):
         if vis == "mpl":
             from .visualizer import visMatplotlib
             self.visualizer = visMatplotlib.VisMatplotlib()
@@ -46,6 +46,8 @@ class TimeHelper:
             self.videoWriter = VideoWriter(videopath, dt, frame.shape[:2])
         else:
             self.videoWriter = None
+        if True:
+            self.visualizer.Show_traj()
 
     def time(self):
         return self.t
@@ -64,7 +66,6 @@ class TimeHelper:
         ticks = math.floor((duration + self.sleepResidual) / self.dt)
         self.sleepResidual += duration - self.dt * ticks
         assert -1e-9 <= self.sleepResidual < self.dt
-
         for _ in range(int(ticks)):
             self.visualizer.update(self.t, self.crazyflies)
             if self.output:

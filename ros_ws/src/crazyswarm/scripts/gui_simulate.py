@@ -21,7 +21,6 @@ class Simulate:
         self.mainwindow = mainwindow_
         self.show_traj = 2
 
-
     # writes to plot_trajectories.yaml file for visMatlotlib.py to get instructions to show trajectoies or not
     def write_yaml(self):
         # check which drones are used
@@ -49,6 +48,7 @@ class Simulate:
         with open("plot_trajectories.yaml", 'w') as outfile:
             yaml.dump(plot_data, outfile, default_flow_style=False)
 
+
     # update bool for yaml file
     def update_yaml(self, bool_show_traj):
         if bool_show_traj.get() == 1:
@@ -75,10 +75,14 @@ class Simulate:
             cf.enableCollisionAvoidance(others, radii)
 
         traj_lst = []
+        
+        #TODO:
         u = 0
         for cf in self.allcfs.crazyflies:
             traj_lst.append(uav_trajectory.Trajectory())
-            traj_lst[u].loadcsv("drone" + str(u+1) + "trajectory.csv")
+            idx = cf.id
+            print(idx)
+            traj_lst[u].loadcsv("drone" + str(idx) + "trajectory.csv")
             cf.uploadTrajectory(0, 0, traj_lst[u])
             #trajs[u].loadcsv("rob_yaw_traj.csv")
             u += 1
@@ -96,7 +100,7 @@ class Simulate:
         self.allcfs.startTrajectory(0, timescale=TIMESCALE)
         self.timeHelper.sleep(traj_lst[0].duration * TIMESCALE + 2.0)
 
-        self.land_func()
+        #self.land_func()
 
     # landing drone, both used at end of flight and at emergency
     def land_func(self):
@@ -128,8 +132,8 @@ def key_pressed(event, sim_obj):
 
 if __name__ == "__main__":
     mainwindow = Tkinter.Tk()
-    mainwindow.title("CrazyCrowd - Simulation control")
-    mainwindow.geometry("350x300")
+    mainwindow.title("Simulation control")
+    mainwindow.geometry("350x150")
 
     frame = Tkinter.Frame(mainwindow)  #inside box
     frame.pack()
@@ -142,7 +146,7 @@ if __name__ == "__main__":
     traj_print.pack()
     start_print=Tkinter.Button(frame, text = "Start trajectory",  bg='green', command = sim_obj.traj_func)
     start_print.pack()
-    land_print=Tkinter.Button(frame, text = "Emergency", bg='red', width=50, height=50, command = sim_obj.emergency_stop)
+    land_print=Tkinter.Button(frame, text = "Emergency", bg='red', width=10, height=5, command = sim_obj.emergency_stop)
     land_print.pack()
     
     mainwindow.bind("<KeyPress>", lambda event: key_pressed(event, sim_obj))
