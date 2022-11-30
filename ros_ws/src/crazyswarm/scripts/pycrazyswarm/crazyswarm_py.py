@@ -26,7 +26,7 @@ def build_argparser(parent_parsers=[]):
 
 
 class Crazyswarm:
-    def __init__(self, crazyflies_yaml=None, parent_parser=None, args=None):
+    def __init__(self, crazyflies_yaml=None, parent_parser=None, args=None, flags=None):
         if parent_parser is not None:
             parents = [parent_parser]
         else:
@@ -43,7 +43,7 @@ class Crazyswarm:
 
         if args.sim:
             from .crazyflieSim import TimeHelper, CrazyflieServer
-            self.timeHelper = TimeHelper(args.vis, args.dt, args.writecsv, disturbanceSize=args.disturbance, maxVel=args.maxvel, videopath=args.video)
+            self.timeHelper = TimeHelper(args.vis, args.dt, args.writecsv, disturbanceSize=args.disturbance, maxVel=args.maxvel, videopath=args.video, flags=flags)
             self.allcfs = CrazyflieServer(self.timeHelper, crazyflies_yaml)
             atexit.register(self.timeHelper._atexit)
         else:
