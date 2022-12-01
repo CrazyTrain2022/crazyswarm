@@ -68,15 +68,12 @@ class Simulate:
 
         traj_lst = []
         
-        #TODO:
         u = 0
         for cf in self.allcfs.crazyflies:
             traj_lst.append(uav_trajectory.Trajectory())
             idx = cf.id
-            print(idx)
             traj_lst[u].loadcsv("drone" + str(idx) + "trajectory.csv")
             cf.uploadTrajectory(0, 0, traj_lst[u])
-            #trajs[u].loadcsv("rob_yaw_traj.csv")
             u += 1
 
         TIMESCALE = 1.0
