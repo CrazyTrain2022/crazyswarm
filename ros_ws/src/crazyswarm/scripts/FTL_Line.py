@@ -87,14 +87,14 @@ if __name__ == "__main__":
         timeHelper.sleep(2.5) 
 
         # Here the drones fly to the 1m high.
-        pos = np.array(cf1.initialPosition) + np.array([0, 0, 1.0])
+        pos = np.array(cf1.initialPosition) + np.array([0, 0, 1])
         cf1.goTo(pos, 0, 2.0)
-        timeHelper.sleep(1.0)
-        cf2.goTo(pos - np.array([0.5, 0, 0]))
-        timeHelper.sleep(1.0)
-        cf3.goTo(pos - np.array([1, 0, 0]))
-        timeHelper.sleep(1.0)
-        cf4.goTo(pos - np.array([1.5, 0, 0]))
+        timeHelper.sleep(2.0)
+        cf2.goTo(pos - np.array([0.5, 0, 0]), 0, 2.0)
+        timeHelper.sleep(2.0)
+        cf3.goTo(pos - np.array([1, 0, 0]), 0, 2.0)
+        timeHelper.sleep(2.0)
+        cf4.goTo(pos - np.array([1.5, 0, 0]), 0, 2.0)
         timeHelper.sleep(2.5)
 
 
@@ -161,6 +161,6 @@ if __name__ == "__main__":
         allcfs.land(targetHeight=0.06, duration=2.0)
         timeHelper.sleep(3.0)
 
-    for file in trajectory_files:
-        if("trajectory.csv" in file):
-            os.remove(file)
+    # for file in trajectory_files:
+    #     if("trajectory.csv" in file):
+    #         os.remove(file)
