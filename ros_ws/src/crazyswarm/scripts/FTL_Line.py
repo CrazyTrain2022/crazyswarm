@@ -98,10 +98,10 @@ if __name__ == "__main__":
         timeHelper.sleep(2.5)
 
 
-        # for cf in allcfs.crazyflies:
-        #     pos = np.array(cf.initialPosition) + np.array([0, 0, 1.0])
-        #     cf.goTo(pos, 0, 2.0)
-        # timeHelper.sleep(2.5)
+        for cf in allcfs.crazyflies:
+            pos = np.array(cf.initialPosition) + np.array([0, 0, 1.0])
+            cf.goTo(pos, 0, 2.0)
+        timeHelper.sleep(2.5)
 
         cf1.startTrajectory(0, timescale=TIMESCALE)
 
