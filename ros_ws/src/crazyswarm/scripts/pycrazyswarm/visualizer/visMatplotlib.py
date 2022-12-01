@@ -1,6 +1,7 @@
 import warnings
 
 from mpl_toolkits.mplot3d import Axes3D
+from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 from mpl_toolkits.mplot3d.art3d import Line3DCollection
 import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
@@ -14,18 +15,28 @@ import os
 COLORS = ["black", "blue", "red", "green"]
 
 # Define dimensions of Visionen
-# VISIONEN_X_DIM = 11.70
-# VISIONEN_Y_DIM = 11.70
-# VISIONEN_Z_DIM = 3.0
 VISIONEN_X_DIM = 8
 VISIONEN_Y_DIM = 8
 VISIONEN_Z_DIM = 3.0
 
-def add_obs(x,y,z,w,h,d):
-    w,h,d = np.indices((w+x, h+y, d+z))
-    cube1 = (w >= x) & (h >= y) & (d >= z)
-    voxels = cube1
-    return voxels
+def add_obs(ax,x1,y1,z1,x2,y2,z2):
+    """Graphical help function to add obstacles"""
+
+    # Defining corner coordinates of obstacles
+    x = [x1,x2,x2,x1],[x2,x2,x2,x2],[x1,x2,x2,x1],[x1,x1,x1,x1],[x1,x2,x2,x1],[x1,x2,x2,x1]
+    y = [y1,y1,y2,y2],[y1,y1,y2,y2],[y1,y1,y2,y2],[y1,y1,y2,y2],[y1,y1,y1,y1],[y2,y2,y2,y2]
+    z = [z1,z1,z1,z1],[z1,z2,z2,z1],[z2,z2,z2,z2],[z1,z2,z2,z1],[z1,z1,z2,z2],[z1,z1,z2,z2]
+
+    # List of obstacle surfaces
+    surfaces = []
+
+    # Loop for creating surfaces
+    for i in range(len(x)):
+        surfaces.append( [list(zip(x[i],y[i],z[i]))] )
+
+    # Plot obstacle, one surface at a time
+    for surface in surfaces:
+        ax.add_collection3d(Poly3DCollection(surface, facecolors='red', alpha = 0.7, zorder=0))
 
 class VisMatplotlib:
     def __init__(self, flags=None):
@@ -39,7 +50,6 @@ class VisMatplotlib:
         self.ax.set_zlabel("Z")
         self.ax.set_title("Drone Simulation")
         self.plot = None
-        self.timeAnnotation = self.ax.annotate("Time", xy=(3, 0), xycoords='axes fraction', fontsize=12, ha='right', va='bottom')
         self.line_color = 1 * np.ones(3)
 
         # Lazy-constructed data for connectivity graph gfx.
@@ -52,6 +62,7 @@ class VisMatplotlib:
         if flags == "--manual":
             self.manual_mode = 1
 
+        #Read "plot_trajectories.yaml" for graphical settings originated from GUI
         file = "plot_trajectories.yaml"
         stream = open(file, 'r')
         data = yaml.safe_load_all(stream)
@@ -59,6 +70,7 @@ class VisMatplotlib:
             self.plot_traj = settings["traj"]
             self.plot_obs = settings["obs"]
 
+        # Obstacle plot
         if self.plot_obs[0]==1:
             file_obs = "pycrazyswarm/visualizer/obstacles.csv"
             with open(file_obs, 'r') as file:
@@ -66,21 +78,19 @@ class VisMatplotlib:
                 obs = np.empty((0,6),int)
                 for coord in reader:
                     step = np.array([[float(coord[0]),float(coord[1]),float(coord[2]),float(coord[3]),float(coord[4]),float(coord[5])]])
-                    all_obs = np.append(obs ,step, axis = 0)
-                    print("File Read")
-            print(all_obs[0])
-            #obs1 = np.array([0,1,0,1,1,1])
-            #obs2 = np.array([0,1,0,2,1,2])
-            #self.ax.voxels(add_obs(obs1[0], obs1[1], obs1[2], obs1[3], obs1[4], obs1[5]), facecolors='red',alpha = 1, zorder = 0)
+                    obs = np.append(obs ,step, axis = 0)
+            for i in range(0,len(obs)):
+                add_obs(self.ax,obs[i][0],obs[i][1],obs[i][2],obs[i][3],obs[i][4],obs[i][5])
+            
 
     def Show_traj(self):
+        """Graphical help function to add trajectories"""
+
         if self.plot_traj[0] == 1:
-            print("Showtraj")
             path = "."
             self.traj = []
             i = 0
             trajectory_files = [f for f in os.listdir(path) if os.path.isfile(os.path.join(path, f))]
-            # print(trajectory_pathfiles)
             for file in trajectory_files:
                 if("trajectory.csv" in file):
                     self.Traj_exist = True
@@ -92,14 +102,13 @@ class VisMatplotlib:
                     for t, k in zip(ts, range(0, len(ts))):
                         e = self.traj[i].eval(t)
                         self.evals[k, 0:3]  = e.pos
-                    self.traj_pos = np.array([self.evals[:,0], self.evals[:,1], self.evals[:,2]]) # evals[:,2]
+                    self.traj_pos = np.array([self.evals[:,0], self.evals[:,1], self.evals[:,2]])
                     self.traj[i]  = self.ax.plot3D(self.evals[:,0], self.evals[:,1], self.evals[:,2], color = COLORS[int(idx)-1], linestyle = 'dashed', alpha=0.7)
                     self.ax.plot3D([self.evals[0,0], self.evals[0,0]], [self.evals[0,1], self.evals[0,1]], [0, self.evals[0,2]],color = COLORS[int(idx)-1], linestyle = 'dashed', alpha=0.7)
                     i += 1
         else:
             pass
 
-        
     def setGraph(self, edges):
         """Set edges of graph visualization - sequence of (i,j) tuples."""
 
@@ -114,15 +123,15 @@ class VisMatplotlib:
             self.graph = Line3DCollection(self.graph_lines, edgecolor=self.line_color)
             self.ax.add_collection(self.graph)
 
-    def showEllipsoids(self, radii):
-        warnings.warn("showEllipsoids not implemented in Matplotlib visualizer.")
-
     def update(self, t, crazyflies):
+        """Function for updating the simulation"""
+
         xs = []
         ys = []
         zs = []
         cs = []
         labels = []
+
         for i in range(0,len(crazyflies)):
             cf = crazyflies[i]
             x, y, z = cf.position()
@@ -135,15 +144,11 @@ class VisMatplotlib:
 
         if self.plot is None:
             self.plot = self.ax.scatter(xs, ys, zs, c=cs)
-            print(cs)
-            print(labels)
             patches = []
             for i in range(0,len(cs)):
                 patches.append(mpatches.Patch(color=cs[i], label=labels[i]))
-            self.ax.legend(handles = patches)
-            
+            self.ax.legend(handles = patches)       
         else:
-            # TODO: Don't use protected members.
             self.plot._offsets3d = (xs, ys, zs)
             self.plot.set_facecolors(cs)
             self.plot.set_edgecolors(cs)
@@ -152,16 +157,9 @@ class VisMatplotlib:
 
         if self.graph is not None:
             # Update graph line segments to match new Crazyflie positions.
-            print("Self.graph true")
             for k, (i, j) in enumerate(self.graph_edges):
                 self.graph_lines[k, 0, :] = xs[i], ys[i], zs[i]
                 self.graph_lines[k, 1, :] = xs[j], ys[j], zs[j]
                 self.graph.set_segments(self.graph_lines)
-                print(self.graph_lines)
 
-        #self.timeAnnotation.set_text("{} s".format(t))
         plt.pause(0.0001)
-
-    def render(self):
-        warnings.warn("Rendering video not supported in VisMatplotlib yet.")
-        return None
