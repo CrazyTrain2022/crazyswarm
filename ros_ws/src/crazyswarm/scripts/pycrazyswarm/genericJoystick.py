@@ -1,6 +1,8 @@
 import time
 import copy
 # import pyglet
+#from keyboard import KeyPoller
+import os
 from . import keyboard
 
 # class JoyStickHandler:
@@ -29,6 +31,8 @@ class Joystick:
         # joystick.push_handlers(self)
         self.timeHelper = timeHelper
         self.joyID = None
+        self.joyName = None
+
 
         try:
             from . import linuxjsdev
@@ -38,8 +42,21 @@ class Joystick:
                 print("Warning: No joystick found!")
             else:
                 ids = [dev["id"] for dev in devices]
+                names = [dev["name"] for dev in devices]
                 # For backwards compatibility, always choose device 0 if available.
                 self.joyID = 0 if 0 in ids else devices[0]["id"]
+
+                #Look for connected Xbox controller (Gamepad)
+                for dev in devices:
+                    flag = False
+                    if dev["name"] == "Xbox Gamepad (userspace driver)":
+                        self.joyName = "Xbox Gamepad"
+                        self.joyID = dev["id"]
+                        flag = True
+                if flag == False:
+                    print("No Xbox gamepad found")
+
+                   
                 self.js.open(self.joyID)
         except ImportError:
             print("Warning: Joystick only supported on Linux.")
@@ -58,7 +75,7 @@ class Joystick:
     def checkIfButtonIsPressed(self):
         if self.joyID is not None:
             state = self.js.read(self.joyID)
-            return state[1][5] == 1
+            return state[1][5] == 1 #Return if Xbox "start" button is pressed
         else:
             return False
 
@@ -66,8 +83,10 @@ class Joystick:
         if self.joyID is not None:
             while not self.checkIfButtonIsPressed():
                 self.timeHelper.sleep(0.01)
+                print("No button pressed")
             while self.checkIfButtonIsPressed():
                 self.timeHelper.sleep(0.01)
+                print("button pressed")
         else:
             with keyboard.KeyPoller() as keyPoller:
                 # Wait until a key is pressed.

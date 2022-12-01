@@ -46,6 +46,7 @@ class TimeHelper:
             self.videoWriter = VideoWriter(videopath, dt, frame.shape[:2])
         else:
             self.videoWriter = None
+
         if True:
             self.visualizer.Show_traj()
 

@@ -47,7 +47,8 @@ if __name__ == "__main__":
             cf.uploadTrajectory(0, 0, traj_lst[j])
             j += 1
 
-        allcfs.takeoff(targetHeight=1.0, duration=2.0)
+
+        allcfs.takeoff(targetHeight=1, duration=2.0)
         timeHelper.sleep(2.5)
         for cf in allcfs.crazyflies:
             pos = np.array(cf.initialPosition) + np.array([0, 0, 1.0])

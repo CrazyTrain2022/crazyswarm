@@ -10,13 +10,14 @@ import os
 # and if the actual distance is larger than the safe dist. the follower can flights, 
 # else it stay at same posistion.
 
-def pos_calc(cf, pos0, pos1, safe):
+def pos_calc(cf, pos0, pos1, safe, leaderz):
     Dis = math.dist(pos0, pos1)
 
     if (Dis > safe):
-        cf.cmdPosition(pos0, 0)
+        cf_safe_dis = np.array([pos0[0], pos0[1], leaderz])
+        cf.cmdPosition(cf_safe_dis, 0)
     else:
-        cf_safe_dis = np.array([pos1[0], pos1[1], pos0[2]]) 
+        cf_safe_dis = np.array([pos1[0], pos1[1], leaderz]) 
         cf.cmdPosition(cf_safe_dis,0)
 
 
@@ -82,26 +83,13 @@ if __name__ == "__main__":
         allcfs.takeoff(targetHeight=1.0, duration=2.0)
         timeHelper.sleep(2.5) 
 
-        # Here the drones fly to the 2m high.
+        # Here the drones fly to the 1m high.
         for cf in allcfs.crazyflies:
             pos = np.array(cf.initialPosition) + np.array([0, 0, 1.0])
             cf.goTo(pos, 0, 2.0)
         timeHelper.sleep(2.5)
 
         cf1.startTrajectory(0, timescale=TIMESCALE)
-
-        # id = 0
-        # for cf in allcfs.crazyflies:
-        #     if(id == 0):
-        #         cf.startTrajectory(0, timescale=TIMESCALE)
-        #         cf_Leader_pos = cf.position()
-        #     elif(id == 1):
-        #         cf.goTo(cf_Leader_pos, 0, 1)
-        #     elif(id == 2):
-        #         cf.goTo(cf_Leader_pos, 0, 2)
-        #     else:
-        #         cf.goTo(cf_Leader_pos, 0, 3)
-        #     id += 1
 
 
         # In this loop the drone with lowest id-number take the leader roll. 
@@ -119,10 +107,10 @@ if __name__ == "__main__":
                 
                 if(i == 0):
                     cf_Leader_pos = cf.position()
-                    
+                    z = cf_Leader_pos[2]
                 elif(i == 1):
                     cf_follow1_pos = cf.position()
-                    pos_calc(cf, cf_Leader_pos, cf_follow1_pos, safe_dis)
+                    pos_calc(cf, cf_Leader_pos, cf_follow1_pos, safe_dis, z)
                 
                 elif(i == 2):
 
@@ -130,11 +118,11 @@ if __name__ == "__main__":
                         timeHelper.sleep(1.0)
                         m = 1
                         cf_follow2_pos = cf.position()
-                        pos_calc(cf, cf_follow1_pos,cf_follow2_pos, safe_dis)
+                        pos_calc(cf, cf_follow1_pos,cf_follow2_pos, safe_dis, z)
 
                     else:
                         cf_follow2_pos = cf.position()
-                        pos_calc(cf, cf_follow1_pos,cf_follow2_pos, safe_dis) 
+                        pos_calc(cf, cf_follow1_pos,cf_follow2_pos, safe_dis, z) 
                 
                 else:
                     if(m == 1):
@@ -142,10 +130,10 @@ if __name__ == "__main__":
                         m = 2
                     
                         cf_follow3_pos = cf.position()
-                        pos_calc(cf, cf_follow2_pos,cf_follow3_pos, safe_dis)
+                        pos_calc(cf, cf_follow2_pos,cf_follow3_pos, safe_dis, z)
                     else:
                         cf_follow3_pos = cf.position()
-                        pos_calc(cf, cf_follow2_pos,cf_follow3_pos, safe_dis)
+                        pos_calc(cf, cf_follow2_pos,cf_follow3_pos, safe_dis, z)
 
                 i += 1
 

@@ -8,7 +8,7 @@ import uav_trajectory
 import tkinter as Tkinter
 import os
 from pycrazyswarm import *
-from ......GUI.gui_main_frame import Gui_main_frame
+# from ......GUI.gui_main_frame import Gui_main_frame
 
 class CF:
     def __init__(self, ax, name, color):
@@ -46,9 +46,10 @@ class CF:
         self.y_data.append(self.y) 
         self.z_data.append(self.z)
         self.p = np.array([self.x, self.y])
+        print(self.p)
 
-        self.log.set_data(self.x_data[frame], self.y_data[frame]) # , self.cf1_z_data[:frame]
-        self.log.set_3d_properties(self.z_data[frame])
+        self.log.set_data(self.x_data, self.y_data) # , self.cf1_z_data[:frame]
+        self.log.set_3d_properties(self.z_data)
         self.pos.set_data(self.x, self.y)
         self.pos.set_3d_properties(self.z)
         
@@ -57,7 +58,7 @@ class CF:
             if self.distance[-1] > 1:
                 print("Warning, drone error > 1 m (" + str(self.distance[-1]) + " m)!")
                 print("Emergency landing")
-                Gui_main_frame.emergency_pressed()
+                # Gui_main_frame.emergency_pressed()
 
     def save(self):
         np.savetxt("./Flight_log_files/" + self.name + "recordedPosition.csv", np.array([self.x_data, self.y_data, self.z_data]).T, delimiter = ',', fmt = '%10f')
@@ -121,33 +122,37 @@ class Visualisation:
             print("Animation resumed")
 
     def cf1_callback(self, msg):
-        self.cf1.x, self.cf1.y, self.cf1.z = msg.pose.position.x, msg.pose.position.y, msg.pose.position.z
-        self.cf1.p = np.array([self.cf1.x, self.cf1.y, self.cf1.z])
-        self.cf1.x_data.append(self.cf1.x)
-        self.cf1.y_data.append(self.cf1.y) 
-        self.cf1.z_data.append(self.cf1.z)
+        if isinstance(msg.pose.position.x, float):
+            self.cf1.x, self.cf1.y, self.cf1.z = float(msg.pose.position.x), float(msg.pose.position.y), float(msg.pose.position.z)
+            self.cf1.p = np.array([self.cf1.x, self.cf1.y, self.cf1.z], dtype=float)
+            self.cf1.x_data.append(self.cf1.x)
+            self.cf1.y_data.append(self.cf1.y) 
+            self.cf1.z_data.append(self.cf1.z)
 
     def cf2_callback(self, msg):
-        self.cf2.x, self.cf2.y, self.cf2.z = msg.pose.position.x, msg.pose.position.y, msg.pose.position.z
-        self.cf2.p = np.array([self.cf2.x, self.cf2.y, self.cf2.z])
-        self.cf2.x_data.append(self.cf2.x)
-        self.cf2.y_data.append(self.cf2.y) 
-        self.cf2.z_data.append(self.cf2.z)
+        if isinstance(msg.pose.position.x, float):
+            self.cf2.x, self.cf2.y, self.cf2.z = float(msg.pose.position.x), float(msg.pose.position.y), float(msg.pose.position.z)
+            self.cf2.p = np.array([self.cf2.x, self.cf2.y, self.cf2.z], dtype=float)
+            self.cf2.x_data.append(self.cf2.x)
+            self.cf2.y_data.append(self.cf2.y) 
+            self.cf2.z_data.append(self.cf2.z)
 
     def cf3_callback(self, msg):
-        self.cf3.x, self.cf3.y, self.cf3.z = msg.pose.position.x, msg.pose.position.y, msg.pose.position.z
-        self.cf3.p = np.array([self.cf3.x, self.cf3.y, self.cf3.z])
-        self.cf3.x_data.append(self.cf3.x)
-        self.cf3.y_data.append(self.cf3.y) 
-        self.cf3.z_data.append(self.cf3.z)
+        if isinstance(msg.pose.position.x, float):
+            self.cf3.x, self.cf3.y, self.cf3.z = float(msg.pose.position.x), float(msg.pose.position.y), float(msg.pose.position.z)
+            self.cf3.p = np.array([self.cf3.x, self.cf3.y, self.cf3.z], dtype=float)
+            self.cf3.x_data.append(self.cf3.x)
+            self.cf3.y_data.append(self.cf3.y) 
+            self.cf3.z_data.append(self.cf3.z)
 
     def cf4_callback(self, msg):
-        self.cf4.x, self.cf4.y, self.cf4.z = msg.pose.position.x, msg.pose.position.y, msg.pose.position.z
-        self.cf4.p = np.array([self.cf4.x, self.cf4.y, self.cf4.z])
-        self.cf4.x_data.append(self.cf4.x)
-        self.cf4.y_data.append(self.cf4.y) 
-        self.cf4.z_data.append(self.cf4.z)
-    
+        if isinstance(msg.pose.position.x, float):
+            self.cf4.x, self.cf4.y, self.cf4.z = float(msg.pose.position.x), float(msg.pose.position.y), float(msg.pose.position.z)
+            self.cf4.p = np.array([self.cf4.x, self.cf4.y, self.cf4.z], dtype=float)
+            self.cf4.x_data.append(self.cf4.x)
+            self.cf4.y_data.append(self.cf4.y) 
+            self.cf4.z_data.append(self.cf4.z)
+        
     def update_plot(self, frame):
         for cf in self.cf_list:
             cf.update_pos(frame)
@@ -174,24 +179,28 @@ class Visualisation:
         plt.show()
 
 if __name__ == "__main__":
+    print("Realtime visualisation started")
+    swarm = Crazyswarm()
+    print("Hej")
+    timeHelper = swarm.timeHelper
+    allcfs = swarm.allcfs
     
-    allcfs = Crazyswarm().allcfs
     cfs = []
     for cf in allcfs.crazyflies:
         cfs.append(cf.prefix)
     
     vis = Visualisation(cfs)
-
-    #rospy.init_node('Pose_Listener')
-    for cf in cfs:
-        if cf == "/cf1":
-            cf1 = rospy.Subscriber("/qualisys/cf1/pose", PoseStamped, vis.cf1_callback)
-        if cf == "/cf2":
-            cf2 = rospy.Subscriber("/qualisys/cf2/pose", PoseStamped, vis.cf2_callback)
-        if cf == "/cf3":
-            cf3 = rospy.Subscriber("/qualisys/cf3/pose", PoseStamped, vis.cf3_callback)
-        if cf == "/cf4":
-            cf4 = rospy.Subscriber("/qualisys/cf4/pose", PoseStamped, vis.cf4_callback)
+    print("Hej")
+    rospy.init_node('Pose_Listener_22')
+    # for cf in cfs:
+    #     if cf == "/cf1":
+    cf1 = rospy.Subscriber("/qualisys/cf1/pose", PoseStamped, vis.cf1_callback)
+        # if cf == "/cf2":
+    cf2 = rospy.Subscriber("/qualisys/cf2/pose", PoseStamped, vis.cf2_callback)
+# if cf == "/cf3":
+    cf3 = rospy.Subscriber("/qualisys/cf3/pose", PoseStamped, vis.cf3_callback)
+# if cf == "/cf4":
+    cf4 = rospy.Subscriber("/qualisys/cf4/pose", PoseStamped, vis.cf4_callback)
         
     ani = animation.FuncAnimation(vis.fig, vis.update_plot, init_func=vis.plot_init)
     
@@ -212,6 +221,6 @@ if __name__ == "__main__":
     save_print.pack()
     plot = Tkinter.Button(frame, text = "Plot error",  bg='grey', command = lambda : [vis.plot_error(), vis.Sim_Paus(ani)]) 
     plot.pack()
-    emergency_bttn = Tkinter.Button(frame, text = "EMERGENCY",  bg='red', command = lambda : Gui_main_frame.emergency_pressed) 
-    emergency_bttn.pack()
+    # emergency_bttn = Tkinter.Button(frame, text = "EMERGENCY",  bg='red', command = lambda : Gui_main_frame.emergency_pressed) 
+    # emergency_bttn.pack()
     plt.show()

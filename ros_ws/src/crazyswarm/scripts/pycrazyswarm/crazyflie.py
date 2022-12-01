@@ -30,7 +30,7 @@ class TimeHelper:
             simulation scripts. Maintains the property that scripts should not
             know/care if they are running in simulation or not.
     """
-    def __init__(self):
+    def __init__(self, flags=None):
         self.rosRate = None
         self.rateHz = None
         self.visualizer = visNull.VisNull()

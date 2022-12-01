@@ -8,7 +8,7 @@ import sys
 import time
 
 
-PROJECT_PATH = "/home/CrazyTrain/CrazyTrain2022/"  #File path to the project folder 'visionen'
+PROJECT_PATH = "/home/crazycrowd/CrazyTrain/CrazyTrain2022/"  #File path to the project folder 'visionen'
 MODES = np.array(["normal", "yaw_independant"])         #Manual control modes
 
 def main(flags):
@@ -120,6 +120,7 @@ def main(flags):
 if __name__ == "__main__":
     # input flags
     flags = sys.argv[2:]
+    print("flags: ", flags)
     main(flags[0])
 
 

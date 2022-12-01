@@ -5,6 +5,6 @@
     output="screen">
     <param name="server_address" value="192.168.0.50"/>
     <param name="server_base_port" value="22222"/>
-    <param name="frame_rate" value="10"/>
+    <param name="frame_rate" value="5"/>
   </node>
 </launch>

@@ -23,26 +23,8 @@ class Simulate:
 
     # writes to plot_trajectories.yaml file for visMatlotlib.py to get instructions to show trajectoies or not
     def write_yaml(self):
-        # check which drones are used
-        # path = "/home/karl/TSRT10/visionen/GUI/points_csv/"
-        path = "../../../../../GUI/points_csv/"
-        waypoint_files = [f for f in os.listdir(path) if os.path.isfile(os.path.join(path, f))]
-        drones = []
-        show_plot_vals = []
-        for file in waypoint_files:
-            if("waypoints.csv" in file):
-                drones.insert(0,file.replace('drone', '').replace('waypoints.csv',''))
-                show_plot_vals.append(self.show_traj)
-
         # make dictionary 
-        plot_data = dict([("settings",[])])
-        i = 0
-        for drone in drones:
-            a = show_plot_vals[i]
-            plot_data["settings"].append(dict(["i"+str(drone), ("plot", a)]))
-            # sett = {"i": str(drone)}
-            # sett["plot"] = a
-            i += 1
+        plot_data = dict([("traj",[self.show_traj]),("obs",[self.show_obs])])
 
         # write to yaml file plot_trajectories
         with open("plot_trajectories.yaml", 'w') as outfile:
@@ -50,12 +32,22 @@ class Simulate:
 
 
     # update bool for yaml file
-    def update_yaml(self, bool_show_traj):
-        if bool_show_traj.get() == 1:
-            self.show_traj = 2
-            self.write_yaml()
-        elif bool_show_traj.get() == 0:
+    def update_yaml(self, bool_show_traj, bool_show_obs):
+        if bool_show_traj.get() == 1 and bool_show_obs.get() == 1:
             self.show_traj = 1
+            self.show_obs = 1
+            self.write_yaml()
+        elif bool_show_traj.get() == 0 and bool_show_obs.get() == 1:
+            self.show_traj = 0
+            self.show_obs = 1
+            self.write_yaml()
+        elif bool_show_traj.get() == 1 and bool_show_obs.get() == 0:
+            self.show_traj = 1
+            self.show_obs = 0
+            self.write_yaml()
+        elif bool_show_traj.get() == 0 and bool_show_obs.get() == 0:
+            self.show_traj = 0
+            self.show_obs = 0
             self.write_yaml()
 
     # start trajectory
@@ -140,9 +132,12 @@ if __name__ == "__main__":
 
     sim_obj = Simulate(mainwindow)
     bool_show_traj=Tkinter.BooleanVar(frame, value=1)
-    sim_obj.update_yaml(bool_show_traj)
+    bool_show_obs=Tkinter.BooleanVar(frame, value=1)
+    sim_obj.update_yaml(bool_show_traj, bool_show_obs)
     
-    traj_print = Tkinter.Checkbutton(frame, text="Show trajectory", variable=bool_show_traj, command = lambda: sim_obj.update_yaml(bool_show_traj), )
+    traj_print = Tkinter.Checkbutton(frame, text="Show trajectory", variable=bool_show_traj, command = lambda: sim_obj.update_yaml(bool_show_traj,bool_show_obs), )
+    traj_print.pack()
+    traj_print = Tkinter.Checkbutton(frame, text="Show obstacles", variable=bool_show_obs, command = lambda: sim_obj.update_yaml(bool_show_traj,bool_show_obs), )
     traj_print.pack()
     start_print=Tkinter.Button(frame, text = "Start trajectory",  bg='green', command = sim_obj.traj_func)
     start_print.pack()
