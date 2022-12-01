@@ -67,6 +67,9 @@ if __name__ == "__main__":
 
     for i in range(TRIALS):
         cf1 = swarm.allcfs.crazyflies[0]
+        cf2 = swarm.allcfs.crazyflies[1]
+        cf3 = swarm.allcfs.crazyflies[2]
+        cf4 = swarm.allcfs.crazyflies[3]
 
         cf1.uploadTrajectory(0, 0, traj1)
         
@@ -84,10 +87,21 @@ if __name__ == "__main__":
         timeHelper.sleep(2.5) 
 
         # Here the drones fly to the 1m high.
-        for cf in allcfs.crazyflies:
-            pos = np.array(cf.initialPosition) + np.array([0, 0, 1.0])
-            cf.goTo(pos, 0, 2.0)
+        pos = np.array(cf1.initialPosition) + np.array([0, 0, 1.0])
+        cf1.goTo(pos, 0, 2.0)
+        timeHelper.sleep(1.0)
+        cf2.goTo(pos - np.array([0.5, 0, 0]))
+        timeHelper.sleep(1.0)
+        cf3.goTo(pos - np.array([1, 0, 0]))
+        timeHelper.sleep(1.0)
+        cf4.goTo(pos - np.array([1.5, 0, 0]))
         timeHelper.sleep(2.5)
+
+
+        # for cf in allcfs.crazyflies:
+        #     pos = np.array(cf.initialPosition) + np.array([0, 0, 1.0])
+        #     cf.goTo(pos, 0, 2.0)
+        # timeHelper.sleep(2.5)
 
         cf1.startTrajectory(0, timescale=TIMESCALE)
 
