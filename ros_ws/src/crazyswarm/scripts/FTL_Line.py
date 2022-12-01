@@ -90,11 +90,11 @@ if __name__ == "__main__":
         pos = np.array(cf1.initialPosition) + np.array([0, 0, 1])
         cf1.goTo(pos, 0, 2.0)
         timeHelper.sleep(2.0)
-        cf2.goTo(pos - np.array([0.5, 0, 0]), 0, 2.0)
+        cf2.goTo(pos - np.array([0.3, 0, 0]), 0, 2.0)
         timeHelper.sleep(2.0)
-        cf3.goTo(pos - np.array([1, 0, 0]), 0, 2.0)
+        cf3.goTo(pos - np.array([0.6, 0, 0]), 0, 2.0)
         timeHelper.sleep(2.0)
-        cf4.goTo(pos - np.array([1.5, 0, 0]), 0, 2.0)
+        cf4.goTo(pos - np.array([0.9, 0, 0]), 0, 2.0)
         timeHelper.sleep(2.5)
 
 
@@ -113,7 +113,7 @@ if __name__ == "__main__":
         nbrloops= 10*(traj1.duration * TIMESCALE +2) # 10Hz
         n = 0
         m = 0
-        safe_dis = 0.5
+        safe_dis = 0.2
         while n < nbrloops:
             i = 0
             
@@ -161,6 +161,6 @@ if __name__ == "__main__":
         allcfs.land(targetHeight=0.06, duration=2.0)
         timeHelper.sleep(3.0)
 
-    # for file in trajectory_files:
-    #     if("trajectory.csv" in file):
-    #         os.remove(file)
+    for file in trajectory_files:
+        if("trajectory.csv" in file):
+            os.remove(file)
