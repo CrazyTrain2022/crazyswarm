@@ -91,6 +91,7 @@ if __name__ == "__main__":
         for cf in allcfs.crazyflies:
             if m > 0 & m < 4:
                 cf.goTo(pos-np.array([m*0.4, 0, 0]), 0, 2.0)
+                timeHelper.sleep(1)
             m += 1
 
         cf1.startTrajectory(0, timescale=TIMESCALE)
