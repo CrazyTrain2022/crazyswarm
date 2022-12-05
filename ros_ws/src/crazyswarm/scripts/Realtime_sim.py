@@ -240,7 +240,7 @@ class Visualisation:
                     self.emergency_active = True
 
     def save_log(self, name):
-        plt.savefig("./Log_files/" + str(name) + ".eps")
+        plt.savefig("./Log_files/" + str(name) + ".png")
         np.savetxt("./Log_files/cf1_recordedPosition.csv", np.array([self.cf1_x_data, self.cf1_y_data, self.cf1_z_data]).T, delimiter = ',', fmt = '%10f')
         np.savetxt("./Log_files/cf2_recordedPosition.csv", np.array([self.cf2_x_data, self.cf2_y_data, self.cf2_z_data]).T, delimiter = ',', fmt = '%10f')
         np.savetxt("./Log_files/cf3_recordedPosition.csv", np.array([self.cf3_x_data, self.cf3_y_data, self.cf3_z_data]).T, delimiter = ',', fmt = '%10f')
