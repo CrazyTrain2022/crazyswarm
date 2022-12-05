@@ -49,6 +49,7 @@ class Visualisation:
         self.traj4_pos = np.empty([1,2],dtype=float)
         # Bool for checking if emergency function has been called. 
         self.emergency_active = False
+        self.Show_traj()
 
     def plot_init(self):
         # Setting up plot limits and axes
@@ -133,8 +134,8 @@ class Visualisation:
             self.traj_on = True
 
     def Show_obstacles(self):
-        sys.path.append("/home/crazycrowd/CrazyTrain/CrazyTrain2022/crazyswarm/ros_ws/src/crazyswarm/scripts/pycrazyswarm/visualizer")
-        file_obs = "obstacles.csv"
+        #sys.path.append("/home/crazycrowd/CrazyTrain/CrazyTrain2022/crazyswarm/ros_ws/src/crazyswarm/scripts/pycrazyswarm/visualizer")
+        file_obs = "pycrazyswarm/visualizer/obstacles.csv"
         with open(file_obs, 'r') as file:
             reader = csv.reader(file, skipinitialspace=True)
             obs = np.empty((0,6),int)

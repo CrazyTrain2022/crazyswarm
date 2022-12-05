@@ -57,15 +57,6 @@
 
   <node name="rviz" pkg="rviz" type="rviz" args="-d $(find crazyswarm)/launch/test.rviz"/>
 
-  <!-- <node pkg="mocap_qualisys"
-    type="mocap_qualisys_node"
-    name="qualisys"
-    output="screen">
-    <param name="server_address" value="192.168.0.50"/>
-    <param name="server_base_port" value="22222"/>
-    <param name="frame_rate" value="10"/>
-  </node> -->
-
   <!-- <node pkg="rqt_plot" type="rqt_plot" name="rqt_plot_x" args="/cf2/log1/values[0]"/> -->
   <!-- <node pkg="rqt_plot" type="rqt_plot" name="rqt_plot_roll" args="/cf1/log1/values[2] /cf1/log1/values[3]"/> -->
 
