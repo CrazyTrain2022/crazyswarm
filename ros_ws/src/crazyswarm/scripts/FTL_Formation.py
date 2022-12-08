@@ -50,19 +50,16 @@ if __name__ == "__main__":
 
     for i in range(TRIALS):
         cf1 = swarm.allcfs.crazyflies[0]
-        
-        
-
         cf1.uploadTrajectory(0, 0, traj1)
         
+        # This is for collision avoidence between the drones.
         xy_radius = 0.2
         radii = xy_radius * np.array([1.0, 1.0, 3.0])
-
         for i, cf in enumerate(swarm.allcfs.crazyflies):
             others = swarm.allcfs.crazyflies[:i] + swarm.allcfs.crazyflies[(i+1):]
             cf.enableCollisionAvoidance(others, radii)
         
-
+        # All drones will take off and go to the initial position.
         allcfs.takeoff(targetHeight=1.0, duration=2.0)
         timeHelper.sleep(2.5)
         for cf in allcfs.crazyflies:
@@ -70,7 +67,10 @@ if __name__ == "__main__":
             cf.goTo(pos, 0, 2.0)
         timeHelper.sleep(2.5)
 
-        
+        # In this loop the drone with lowest id-number take the leader roll. 
+        # other cfs fly if the disatnce between them and the leader drone are 
+        # larger then safe distance, else hover at same position as before, 
+        # until the distance is checked again.
 
         cf1.startTrajectory(0, timescale=TIMESCALE)
         nbrloops= 10*(traj1.duration * TIMESCALE +2)

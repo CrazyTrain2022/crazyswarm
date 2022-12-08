@@ -7,8 +7,9 @@ import math
 import os
 
 # Definitation of the function that calulate the distance between two cfs (crazyflies)
-# and if the actual distance is larger than the safe dist. the follower can flights, 
-# else it stay at same posistion.
+# and if the actual distance is larger than the safe dist. the follower can flight
+# towards the leader/sub leader drone, else it stay at same posistion as it current
+# position. The height of the drone will always be the same as the leader.
 
 def pos_calc(cf, pos0, pos1, safe, leaderz):
     Dis = math.dist(pos0, pos1)
@@ -70,9 +71,10 @@ if __name__ == "__main__":
         
         cf1.uploadTrajectory(0, 0, traj1)
         
+
+        # This is for collision avoidence between the drones. 
         xy_radius = 0.2
         radii = xy_radius * np.array([1.0, 1.0, 3.0])
-
         for i, cf in enumerate(swarm.allcfs.crazyflies):
             others = swarm.allcfs.crazyflies[:i] + swarm.allcfs.crazyflies[(i+1):]
             cf.enableCollisionAvoidance(others, radii)
@@ -83,10 +85,12 @@ if __name__ == "__main__":
         allcfs.takeoff(targetHeight=1.0, duration=2.0)
         timeHelper.sleep(2.5) 
 
-        # Here the drones fly to the 1m high.
+        # Here the leader drone drone fly to it's initial position, 1m high.
         pos = np.array(cf1.initialPosition) + np.array([0, 0, 1])
         cf1.goTo(pos, 0, 2.0)
         
+        # This is for creating a line before the formation flight. The follower drones
+        # will be set with a distance of 0.4 meter between them in x-axis
         m = 0
         for cf in allcfs.crazyflies:
             if m > 0 & m < 4:
@@ -99,7 +103,8 @@ if __name__ == "__main__":
 
         # In this loop the drone with lowest id-number take the leader roll. 
         # other cfs fly if the disatnce between them are larger then safe distance,
-        # else hover at same position as before.
+        # else hover at same position as before, until the distance is checked 
+        # again.
 
         nbrloops= 10*(traj1.duration * TIMESCALE +2) # 10Hz
         n = 0
@@ -118,27 +123,32 @@ if __name__ == "__main__":
                     pos_calc(cf, cf_Leader_pos, cf_follow1_pos, safe_dis, z)
                 
                 elif(i == 2):
+                    cf_follow2_pos = cf.position()
+                    pos_calc(cf, cf_follow1_pos,cf_follow2_pos, safe_dis, z) 
 
-                    if (m == 0):
-                        timeHelper.sleep(1.0)
-                        m = 1
-                        cf_follow2_pos = cf.position()
-                        pos_calc(cf, cf_follow1_pos,cf_follow2_pos, safe_dis, z)
+                    # if (m == 0):
+                    #     timeHelper.sleep(1.0)
+                    #     m = 1
+                    #     cf_follow2_pos = cf.position()
+                    #     pos_calc(cf, cf_follow1_pos,cf_follow2_pos, safe_dis, z)
 
-                    else:
-                        cf_follow2_pos = cf.position()
-                        pos_calc(cf, cf_follow1_pos,cf_follow2_pos, safe_dis, z) 
+                    # else:
+                    #     cf_follow2_pos = cf.position()
+                    #     pos_calc(cf, cf_follow1_pos,cf_follow2_pos, safe_dis, z) 
                 
                 else:
-                    if(m == 1):
-                        timeHelper.sleep(1.0)
-                        m = 2
+                    cf_follow3_pos = cf.position()
+                    pos_calc(cf, cf_follow2_pos,cf_follow3_pos, safe_dis, z)
+
+                    # if(m == 1):
+                    #     timeHelper.sleep(1.0)
+                    #     m = 2
                     
-                        cf_follow3_pos = cf.position()
-                        pos_calc(cf, cf_follow2_pos,cf_follow3_pos, safe_dis, z)
-                    else:
-                        cf_follow3_pos = cf.position()
-                        pos_calc(cf, cf_follow2_pos,cf_follow3_pos, safe_dis, z)
+                    #     cf_follow3_pos = cf.position()
+                    #     pos_calc(cf, cf_follow2_pos,cf_follow3_pos, safe_dis, z)
+                    # else:
+                    #     cf_follow3_pos = cf.position()
+                    #     pos_calc(cf, cf_follow2_pos,cf_follow3_pos, safe_dis, z)
 
                 i += 1
 
