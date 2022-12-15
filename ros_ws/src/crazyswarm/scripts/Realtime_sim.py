@@ -49,7 +49,7 @@ class Visualisation:
         self.traj4_pos = np.empty([1,2],dtype=float)
         # Bool for checking if emergency function has been called. 
         self.emergency_active = False
-        self.Show_traj()
+        # self.Show_traj()
 
     def plot_init(self):
         # Setting up plot limits and axes
@@ -234,7 +234,7 @@ class Visualisation:
             self.cf4_pos.set_3d_properties(self.cf4_z_data[-1])
             if len(self.traj4_pos[0]) > 2:
                 self.distance4.append(min(np.linalg.norm(self.traj4_pos.T-self.cf4_p, axis=1)))
-                if self.distance1[-4] > 1 and not self.emergency_active:
+                if self.distance4[-1] > 1 and not self.emergency_active:
                     print("Warning, drone4 error > 1 m (" + str(self.distance4[-1]) + " m)!")
                     print("Emergency landing!")
                     self.emergency()
@@ -263,8 +263,8 @@ class Visualisation:
             self.ax2.plot(t,self.distance4, color ="green", label = "cf4")
 
         self.ax2.set_title("Distance to trajectory")
-        self.ax2.set_xlabel("Time")
-        self.ax2.set_ylabel("Error from reference")
+        self.ax2.set_xlabel("Sample number")
+        self.ax2.set_ylabel("Error from reference [m]")
         self.ax2.legend()
         self.ax2.grid()
         self.fig2.savefig("./Log_files/Path_error.png")
@@ -291,13 +291,16 @@ if __name__ == "__main__":
     traj_print.pack()
     show_obstacles = Tkinter.Button(frame, text="Show obstacles", bg='grey', command = lambda : vis.Show_obstacles())
     show_obstacles.pack()
+
+    emergency_bttn = Tkinter.Button(frame, text = "EMERGENCY",  bg='red', command = lambda : vis.emergency()) 
+    emergency_bttn.pack()
+  
+    save_print = Tkinter.Button(frame, text = "Save plot to file",  bg='grey', command = lambda : vis.save_log(entry1.get())) 
+    save_print.pack()
     entry1 = Tkinter.Entry(mainwindow)
     entry1.insert(0, "Name of saved file")
     entry1.pack()
-    save_print = Tkinter.Button(frame, text = "Save plot to file",  bg='grey', command = lambda : vis.save_log(entry1.get())) 
-    save_print.pack()
     plot = Tkinter.Button(frame, text = "Plot error",  bg='grey', command = lambda : [vis.plot_error(), vis.Sim_Paus(ani)]) 
     plot.pack()
-    emergency_bttn = Tkinter.Button(frame, text = "EMERGENCY",  bg='red', command = lambda : vis.emergency()) 
-    emergency_bttn.pack()
+   
     plt.show()
