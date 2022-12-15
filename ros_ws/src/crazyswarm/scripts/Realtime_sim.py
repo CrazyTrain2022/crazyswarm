@@ -10,8 +10,6 @@ import matplotlib.animation as animation
 import uav_trajectory
 from pycrazyswarm.visualizer import visMatplotlib
 
-
-
 class Visualisation:
     """Visualisation class for Real Time Visualisation
 
@@ -84,6 +82,7 @@ class Visualisation:
 
         self.emergency_active = False
         self.show_traj()
+        
     def plot_init(self):
         """ Initialisation of animation plot window.
 
@@ -421,8 +420,8 @@ class Visualisation:
             self.ax2.plot(t, self.distance4, color="green", label="cf4")
 
         self.ax2.set_title("Distance to trajectory")
-        self.ax2.set_xlabel("Time")
-        self.ax2.set_ylabel("Error from reference")
+        self.ax2.set_xlabel("Sample number")
+        self.ax2.set_ylabel("Error from reference [m]")
         self.ax2.legend()
         self.ax2.grid()
         self.fig2.savefig("./Log_files/Path_error.png")
